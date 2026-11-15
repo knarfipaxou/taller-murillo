@@ -300,6 +300,52 @@ const IOSAU={get:null,el:null,unlocked:false,
  instrument(SND){Object.keys(SND).forEach(k=>{const f=SND[k];if(typeof f!=="function")return;SND[k]=function(...a){__snd.count[k]=(__snd.count[k]||0)+1;__snd.log.push(k);if(__snd.log.length>300)__snd.log.shift();return f.apply(this,a);};});return SND;}
 };
 
+/* ================= REPRISE : garder une partie en cours (localStorage) =================
+   Outils communs : hasard rejouable (graine), purge des parties trop vieilles, fenêtre « Reprendre ». */
+(function(){
+ const MAXAGE=7*864e5;
+ function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+ const css=`.rp-ov{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;background:rgba(10,10,15,.72);padding:16px}
+.rp-ov.on{display:flex}
+.rp-card{width:min(560px,94vw);max-height:92vh;overflow:auto;background:#c6c6c6;color:#222;border:4px solid #000;box-shadow:inset 4px 4px 0 #fff,inset -4px -4px 0 #555,0 12px 40px #000a;padding:18px 18px 14px;text-align:center;font-family:inherit}
+.rp-card h2{margin:4px 0 6px;font-size:24px}
+.rp-ico{font-size:40px;line-height:1}
+.rp-what{margin:4px 0 10px;font-size:18px;font-weight:700}
+.rp-pips{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;margin:0 auto 14px;max-width:470px}
+.rp-pips i{width:11px;height:11px;background:#8b8b8b;border:2px solid #000}
+.rp-pips i.ok{background:#5bbf45}.rp-pips i.cur{background:#f4d35e}
+.rp-bar{height:16px;border:3px solid #000;background:#8b8b8b;margin:0 auto 14px;max-width:420px}.rp-bar i{display:block;height:100%;background:#5bbf45}
+.rp-card button{font:inherit;cursor:pointer;border:3px solid #000;box-shadow:inset -3px -3px 0 #0005,inset 3px 3px 0 #fff6}
+.rp-go{display:block;width:100%;min-height:62px;font-size:21px!important;font-weight:800!important;background:#5bbf45;color:#fff;text-shadow:2px 2px 0 #0007;padding:10px 14px}
+.rp-row{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.rp-new,.rp-later{min-height:44px;font-size:15px!important;background:#ddd;color:#333;padding:6px 14px}
+.rp-note{font-size:13px;color:#444;margin:10px 0 0}`;
+ function ensure(){let ov=document.getElementById("rpOv");if(ov)return ov;const st=document.createElement("style");st.textContent=css;document.head.appendChild(st);
+  ov=document.createElement("div");ov.id="rpOv";ov.className="rp-ov";document.body.appendChild(ov);return ov;}
+ const R={
+  MAXAGE,
+  seed(){return (Math.floor(Math.random()*2147483646)+1);},
+  withSeed(s,fn){if(s==null)return fn();const o=Math.random;Math.random=mulberry(s);try{return fn();}finally{Math.random=o;}},
+  purge(store){const now=Date.now();let ch=false;for(const k in store){const v=store[k];if(!v||typeof v!=="object"||!(now-(+v.ts||0)<MAXAGE)||now-(+v.ts||0)<-864e5){delete store[k];ch=true;}}return ch;},
+  latest(store){let b=null;for(const k in store){const v=store[k];if(v&&typeof v==="object"&&(!b||(+v.ts||0)>(+b.ts||0)))b=v;}return b;},
+  isOpen(){const o=document.getElementById("rpOv");return !!(o&&o.classList.contains("on"));},
+  close(){const o=document.getElementById("rpOv");if(o)o.classList.remove("on");},
+  /* o = {what (html), done, total, onGo, onNew, onLater (facultatif)} */
+  ask(o){const ov=ensure(),t=Math.max(1,o.total|0),d=Math.max(0,Math.min(t,o.done|0));
+   const vis=t<=80?`<div class="rp-pips">${Array.from({length:t},(x,i)=>`<i class="${i<d?"ok":i===d?"cur":""}"></i>`).join("")}</div>`:`<div class="rp-bar"><i style="width:${Math.round(100*d/t)}%"></i></div>`;
+   ov.innerHTML=`<div class="rp-card" role="dialog" aria-modal="true"><div class="rp-ico">⏸️</div><h2>Ta partie est gardée</h2><p class="rp-what">${o.what||""}</p>${vis}
+    <button class="rp-go" id="rpGo">▶ Reprendre où tu t'étais arrêté (${d}/${t})</button>
+    <div class="rp-row"><button class="rp-new" id="rpNew">↺ Recommencer</button>${o.onLater?'<button class="rp-later" id="rpLater">Plus tard</button>':""}</div>
+    <p class="rp-note">La partie reste gardée 7 jours.</p></div>`;
+   ov.classList.add("on");
+   const done=f=>()=>{ov.classList.remove("on");try{f&&f();}catch(e){console.error(e);}};
+   document.getElementById("rpGo").onclick=done(o.onGo);document.getElementById("rpNew").onclick=done(o.onNew);
+   const l=document.getElementById("rpLater");if(l)l.onclick=done(o.onLater);
+   ov.onclick=e=>{if(e.target===ov&&o.onLater)done(o.onLater)();};}
+ };
+ window.REPRISE=R;
+})();
+
 /* ================= EL TALLER DE MURILLO : données ================= */
 const INTERRO=new Date(2026,10,19);
 function trfr(fr,later){return fr?`<span class="trfr${later?" later":""}">${fr}</span>`:"";}
@@ -677,7 +723,7 @@ const fr=x=>String(Math.round(x*100)/100).replace(".",",");
 const rnd=a=>a[Math.floor(Math.random()*a.length)];
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
 const KEY="tallerMurillo.v1";
-function fresh(){return {L:{},m:{},due:{},err:{},boss:[],papa:{},mute:false,runs:{}};}
+function fresh(){return {L:{},m:{},due:{},err:{},boss:[],papa:{},mute:false,runs:{},rp:{}};}
 let S=load();
 function load(){try{return Object.assign(fresh(),JSON.parse(localStorage.getItem(KEY)||"{}"));}catch(e){return fresh();}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
@@ -984,9 +1030,9 @@ let RUN=null;
 const stepNow=()=>RUN&&RUN.steps[RUN.si];
 function openEnc(){$("enc").classList.add("on");}
 function closeEnc(){try{if(VOIX.cur)VOIX.stop(VOIX.cur);}catch(e){}$("enc").classList.remove("on");RUN=null;renderMap();try{VOIX.tick(VOIX.bars.in);}catch(e){}}
-function startStation(k){const D=ST[k];let pl=D.pool();const list=D.pick?D.pick(pl):D.ordered?pl:prio(pl).slice(0,D.n);
- if(k==="placer")PLACED={};
- RUN={mode:"st",st:k,q:list.map(x=>x.make(false)),qk:list.map(x=>x.key),mk:list,qi:0,firstOK:0,reps:{}};openEnc();startItem();}
+function startStation(k){const D=ST[k];const psd=REPRISE.seed();let pl=REPRISE.withSeed(psd,()=>D.pool());const list=D.pick?D.pick(pl):D.ordered?pl:prio(pl).slice(0,D.n);
+ if(k==="placer")PLACED={};const sd=list.map(()=>REPRISE.seed());
+ RUN={mode:"st",st:k,q:list.map((x,i)=>REPRISE.withSeed(sd[i],()=>x.make(false))),qk:list.map(x=>x.key),mk:list,sd,psd,qi:0,firstOK:0,reps:{}};openEnc();startItem();}
 function micLang(){const s=typeof stepNow==="function"?stepNow():null;if(!s)return "es-ES";
  if(s.lang)return s.lang;if(s.fiche&&FICHES[s.fiche]&&FICHES[s.fiche].lang==="fr-FR")return "fr-FR";
  const txt=String(s.prompt||s.q||s.title||"").replace(/<[^>]+>/g," ");
@@ -1033,7 +1079,7 @@ function hint(){const s=stepNow();if(!s||!s.hint)return;SND.click();say("💡 "+
 function next(){const R=RUN;if(R.mode==="L")return learnNext();R.si++;if(R.si<R.steps.length){renderStep();return;}
  const key=R.qk[R.qi];
  if(R.itemKo){S.due[key]=true;S.err[key]=(S.err[key]||0)+1;S.m[key]=false;
-  if(!R.reps[key]&&R.mode==="st"&&R.st!=="placer"){R.reps[key]=1;const pos=Math.min(R.q.length,R.qi+4);const mk=R.mk[R.qi];R.q.splice(pos,0,mk.make(true));R.qk.splice(pos,0,key);R.mk.splice(pos,0,mk);R.q[pos].rep=true;}}
+  if(!R.reps[key]&&R.mode==="st"&&R.st!=="placer"){R.reps[key]=1;const pos=Math.min(R.q.length,R.qi+4);const mk=R.mk[R.qi],sd=REPRISE.seed();R.q.splice(pos,0,REPRISE.withSeed(sd,()=>mk.make(true)));R.qk.splice(pos,0,key);R.mk.splice(pos,0,mk);if(R.sd)R.sd.splice(pos,0,sd);R.q[pos].rep=true;}}
  else{if(!R.item.rep||!S.due[key]||true){S.m[key]=true;S.due[key]=false;}if(!R.item.rep)R.firstOK++;}
  save();R.qi++;if(R.qi<R.q.length){startItem();return;}endRun();}
 function endRun(){const R=RUN;SND.level();const k=R.st;S.runs[k]=(S.runs[k]||0)+1;save();const n=R.q.filter(x=>!x.rep).length;
@@ -1075,7 +1121,7 @@ function bossSteps(){const st=[];const add=(sec,it,pts)=>it.steps.forEach((s,i)=
  shuffle(SET.map((x,i)=>i)).slice(0,4).forEach(i=>add("VI. Es, está ou tiene",setItem(i),.5));
  shuffle([0,1,3,4,5,6]).slice(0,2).forEach(i=>add("VII. Le document 1",cultItem(i),.5));shuffle(DOC1.map((x,i)=>i)).slice(0,2).forEach(i=>add("VII. Le document 1",doc1Item(i),.5));
  add("VIII. Expression écrite",textItem(),4);return st;}
-function startBoss(){RUN={mode:"b",q:[],qk:[],qi:0,firstOK:0,reps:{},sc:0,log:[]};const st=bossSteps();RUN.q=st.map(s=>({steps:[s]}));RUN.qk=st.map(s=>s.bid);RUN.item=RUN.q[0];RUN.steps=RUN.item.steps;RUN.si=0;openEnc();renderStep();}
+function startBoss(){const bseed=REPRISE.seed();RUN={mode:"b",q:[],qk:[],qi:0,firstOK:0,reps:{},sc:0,log:[],bseed};const st=REPRISE.withSeed(bseed,bossSteps);RUN.q=st.map(s=>({steps:[s]}));RUN.qk=st.map(s=>s.bid);RUN.item=RUN.q[0];RUN.steps=RUN.item.steps;RUN.si=0;openEnc();renderStep();}
 function bossAnswer(s,v){const R=RUN;let pts=0,st,cor=s.good;
  if(s.k==="text"){const t=textScore(v);pts=t.sc;if(R.papaG==="coeur")pts=Math.max(pts,4);else if(R.papaG==="presque")pts=Math.max(pts,3);st=pts>=3.5?"ok":pts>=2?"near":"ko";cor=textMsg(t);}
  else{const r=s.check(v);st=r.st;pts=st==="ok"?s.pts:st==="near"?s.pts*.75:0;if(st==="near")cor=(r.msg||"").replace(/^🟠\s*/,"");}
@@ -1096,7 +1142,7 @@ $("bPlay").onclick=()=>{SND.level();show("map");renderMap();};
 $("bSound").onclick=()=>{S.mute=!S.mute;save();renderMap();if(!S.mute)SND.ok();};
 $("bCahier").onclick=()=>{SND.click();renderBiblio();$("cahier").classList.add("on");};
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>$(b.dataset.close).classList.remove("on"));
-$("eClose").onclick=()=>{if(RUN&&RUN.mode==="b"&&RUN.qi<RUN.q.length&&!confirm("Quitter l'interro ? Elle ne sera pas notée."))return;const e=$("eEnd");if(e)e.remove();closeEnc();};
+$("eClose").onclick=()=>{if(RUN&&RUN.mode==="b"&&RUN.qi<RUN.q.length&&!confirm("Quitter l'interro ? Tes réponses sont gardées. Tu pourras la reprendre plus tard."))return;const e=$("eEnd");if(e)e.remove();closeEnc();};
 $("eGo").onclick=go;$("eNext").onclick=()=>{const R=RUN;if(R&&R.mode==="r"&&R.qi>=1){closeEnc();renderBiblio();$("cahier").classList.add("on");return;}next();};$("eHint").onclick=hint;
 [$("eGo"),$("eNext"),$("eHint")].forEach(b=>b.addEventListener("pointerdown",e=>e.preventDefault()));
 $("in").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();if(RUN&&RUN.wait){$("eNext").click();}else go();}});
@@ -1201,14 +1247,20 @@ function cardStep(L,c,i,pass){const fig=c.fig==="b"?bodySVG(c.n):c.fig==="f"?fac
   prompt:pass===0?"Regarde la réponse, puis tape-la.":pass===1?"Tape la réponse complète, aidé des premières lettres.":(c.t==="noun"?"De mémoire, avec le déterminant !":"De mémoire !"),
   good:ans,hint:c.fr?`En français : ${c.fr}.`:`Ça commence par « ${ans.slice(0,2)} ».`,
   check(v){const r=cardCheck(c,v);if(r.st==="ok"){if(!r.msg)r.msg="✔ "+esc(ans)+(fr?trfr(fr):"");if(isTradToEs(c)||c.lang==="fr-FR")r.reveal=true;}else if(r.st==="near")r.msg="🟠 "+r.msg;return r;}};}
-function startLesson(id,review){const L=Object.assign({id},LESSONS[id]);const items=[];const one=s=>items.push({steps:[s]});
- if(!review)one({k:"explain",noInput:true,title:"Découvrir",scene:()=>`<div class="lesson">${L.explain()}</div>`,prompt:""});
- if(L.fiche){if(review)one(reciteStep(L,3,true));else [0,1,2,3].forEach(l=>one(reciteStep(L,l)));}
- const C=L.cards||[];if(C.length){if(!review){shuffle(C.map((c,i)=>i)).forEach(i=>one(cardStep(L,C[i],i,0)));shuffle(C.map((c,i)=>i)).forEach(i=>one(cardStep(L,C[i],i,1)));}
-  shuffle(C.map((c,i)=>i)).forEach(i=>one(cardStep(L,C[i],i,2)));}
+/* un élément de leçon se reconstruit à partir d'un petit descripteur (pour reprendre une partie) */
+function lessonItem(L,d){let s;if(d.t==="x")s={k:"explain",noInput:true,title:"Découvrir",scene:()=>`<div class="lesson">${L.explain()}</div>`,prompt:""};
+ else if(d.t==="r")s=reciteStep(L,d.l,!!d.rv);
+ else{s=cardStep(L,(L.cards||[])[d.i],d.i,d.p);if(d.rep)s.title="Encore une fois";}
+ const it={steps:[s],d};if(d.rep)it.rep=true;return it;}
+function startLesson(id,review){const L=Object.assign({id},LESSONS[id]);const ds=[];const one=d=>ds.push(d);
+ if(!review)one({t:"x"});
+ if(L.fiche){if(review)one({t:"r",l:3,rv:1});else [0,1,2,3].forEach(l=>one({t:"r",l}));}
+ const C=L.cards||[];if(C.length){if(!review){shuffle(C.map((c,i)=>i)).forEach(i=>one({t:"c",i,p:0}));shuffle(C.map((c,i)=>i)).forEach(i=>one({t:"c",i,p:1}));}
+  shuffle(C.map((c,i)=>i)).forEach(i=>one({t:"c",i,p:2}));}
+ const items=ds.map(d=>lessonItem(L,d));
  RUN={mode:"L",lid:id,review:!!review,L,q:items,qk:items.map(()=>"le:"+id),qi:0,tn:0,tok:0,recOK:!L.fiche,recPapa:false,firstOK:0,reps:{}};openEnc();startItem();}
 function learnNext(){const R=RUN,s=stepNow();
- if(s.test){R.tn++;if(!R.itemKo)R.tok++;else{S.due[s.ckey]=true;const c=R.L.cards[+s.ckey.split(":").pop()];const pos=Math.min(R.q.length,R.qi+4);const rs=cardStep(R.L,c,+s.ckey.split(":").pop(),1);rs.title="Encore une fois";R.q.splice(pos,0,{steps:[rs],rep:true});R.qk.splice(pos,0,s.ckey);}}
+ if(s.test){R.tn++;if(!R.itemKo)R.tok++;else{S.due[s.ckey]=true;const ci=+s.ckey.split(":").pop();const pos=Math.min(R.q.length,R.qi+4);R.q.splice(pos,0,lessonItem(R.L,{t:"c",i:ci,p:1,rep:1}));R.qk.splice(pos,0,s.ckey);}}
  if(s.recFinal&&!R.recOK)R.recOK=!R.revealed||R.recPapa;
  if(s.k==="rec"&&!s.recFinal&&R.revealed){} 
  R.qi++;if(R.qi<R.q.length){startItem();return;}learnEnd();}
@@ -1336,6 +1388,59 @@ openEnc=(function(orig){return function(){const u=$("qUp");if(u)u.classList.remo
 hero();
 $("bPlay").onclick=()=>{SND.level();show("map");renderMap();if(!hero().intro&&!window.__tqQuiet)openIntro(0);};
 window.__tq={hero,rankIdx,pigCount,questPct,pigOK,pigNeed,openIntro,closeIntro,startReto,renderQuest,isMaestro};
+
+/* ================= REPRISE : une partie interrompue se reprend là où elle s'est arrêtée ================= */
+function rpStore(){if(!S.rp||typeof S.rp!=="object"||Array.isArray(S.rp))S.rp={};return S.rp;}
+function rpKey(R){if(!R)return null;if(R.mode==="st")return R.reto||R.st==="reto"||!ST[R.st]?null:"st:"+R.st;if(R.mode==="L")return LESSONS[R.lid]?"L:"+R.lid:null;if(R.mode==="b")return R.bseed!=null?"b":null;return null;}
+function rpGet(k){const st=rpStore();if(REPRISE.purge(st))save();const b=st[k];return b&&typeof b==="object"&&b.qi>=0&&b.n>0?b:null;}
+function rpDrop(k){const st=rpStore();if(st[k]){delete st[k];save();}}
+function rpSnap(){try{const R=RUN,k=rpKey(R);if(!k||!R.q||R.ended)return;if(R.qi>=R.q.length)return;
+ const st=rpStore();const prog=R.qi>=1||!!R.rpAns||!!R.itemKo;
+ if(!prog){if(st[k]){delete st[k];save();}return;}
+ const b={v:1,k,ts:Date.now(),mode:R.mode,qi:R.qi,si:R.si||0,n:R.q.length,ans:!!R.rpAns,itemKo:!!R.itemKo,revealed:!!R.revealed,firstOK:R.firstOK||0,reps:R.reps||{},rep:R.q.map(x=>!!(x&&x.rep))};
+ if(R.mode==="st"){b.st=R.st;b.qk=R.qk.slice();b.sd=R.qk.map((x,i)=>R.sd&&R.sd[i]!=null?R.sd[i]:null);b.psd=R.psd==null?null:R.psd;if(R.st==="placer")b.placed=Object.assign({},PLACED);}
+ else if(R.mode==="L"){b.lid=R.lid;b.review=!!R.review;b.ds=R.q.map(x=>x&&x.d||null);if(b.ds.some(x=>!x))return;b.tn=R.tn||0;b.tok=R.tok||0;b.recOK=!!R.recOK;b.recPapa=!!R.recPapa;}
+ else if(R.mode==="b"){b.bseed=R.bseed;b.sc=R.sc||0;b.log=R.log||[];b.ans=false;}
+ st[k]=b;save();}catch(e){console.error(e);}}
+function rpWhat(b){try{if(b.mode==="st")return ST[b.st].ico+" "+esc(ST[b.st].name);if(b.mode==="L"){const L=LESSONS[b.lid];const d=b.ds&&b.ds[b.qi];
+  const ph=d?(d.rep?"Encore une fois":d.t==="x"?"Découvrir":d.t==="r"?LV[d.l]:["Apprendre","Indices","Test sans indice"][d.p]):"";return "📖 "+esc(L.title)+(ph?" · "+esc(ph):"");}
+ if(b.mode==="b")return "👹 La fausse interro<br><small>Tes réponses déjà données sont gardées. Pas de deuxième essai.</small>";}catch(e){}return "Ta partie";}
+function rpFresh(b){if(b.mode==="st")startStation(b.st);else if(b.mode==="L")startLesson(b.lid,toReview(b.lid));else if(b.mode==="b")startBoss();}
+function rpResume(b){try{
+  if(b.mode==="st"){const D=ST[b.st];if(!D||!Array.isArray(b.qk))throw new Error("station");if(b.st==="placer")PLACED=Object.assign({},b.placed||{});
+   const pl=REPRISE.withSeed(b.psd,()=>D.pool());const mk=b.qk.map(key=>pl.find(x=>x.key===key));if(mk.some(x=>!x))throw new Error("clé");
+   const sd=b.qk.map((x,i)=>b.sd&&b.sd[i]!=null?b.sd[i]:null);const rep=b.rep||[];
+   const q=mk.map((m,i)=>{const it=REPRISE.withSeed(sd[i],()=>m.make(!!rep[i]));if(rep[i])it.rep=true;return it;});
+   RUN={mode:"st",st:b.st,q,qk:b.qk.slice(),mk,sd,psd:b.psd,qi:Math.min(b.qi,q.length-1),firstOK:b.firstOK||0,reps:b.reps||{}};}
+  else if(b.mode==="L"){if(!LESSONS[b.lid]||!Array.isArray(b.ds))throw new Error("leçon");const L=Object.assign({id:b.lid},LESSONS[b.lid]);
+   const items=b.ds.map(d=>lessonItem(L,d));
+   RUN={mode:"L",lid:b.lid,review:!!b.review,L,q:items,qk:items.map(()=>"le:"+b.lid),qi:Math.min(b.qi,items.length-1),tn:b.tn||0,tok:b.tok||0,recOK:b.recOK!=null?!!b.recOK:!L.fiche,recPapa:!!b.recPapa,firstOK:0,reps:{}};}
+  else if(b.mode==="b"){if(b.bseed==null)throw new Error("boss");const st=REPRISE.withSeed(b.bseed,bossSteps);if(st.length!==b.n)throw new Error("boss n");
+   RUN={mode:"b",q:st.map(s=>({steps:[s]})),qk:st.map(s=>s.bid),qi:b.qi,firstOK:0,reps:{},sc:+b.sc||0,log:Array.isArray(b.log)?b.log:[],bseed:b.bseed};}
+  else throw new Error("mode");
+  openEnc();startItem();const R=RUN;
+  if(b.si>0&&b.si<R.steps.length){R.si=b.si;renderStep();}
+  R.itemKo=!!b.itemKo;R.revealed=!!b.revealed;
+  if(b.ans&&R.mode!=="b")next();
+  rpSnap();toast("On reprend où tu t'étais arrêté.");
+ }catch(e){console.error(e);rpDrop(b.k);RUN=null;toast("Cette partie ne peut pas reprendre. On recommence.");try{rpFresh(b);}catch(x){}}}
+function rpAsk(b,fresh,later){REPRISE.ask({what:rpWhat(b),done:b.qi,total:b.n,onGo:()=>{SND.click();rpResume(b);},onNew:()=>{SND.click();rpDrop(b.k);fresh();},onLater:later||(()=>{})});}
+/* ---------- branchements ---------- */
+renderStep=(function(o){return function(){const r=o.apply(this,arguments);if(RUN)RUN.rpAns=false;rpSnap();return r;};})(renderStep);
+onGood=(function(o){return function(){const r=o.apply(this,arguments);if(RUN)RUN.rpAns=true;rpSnap();return r;};})(onGood);
+onBad=(function(o){return function(){const r=o.apply(this,arguments);rpSnap();return r;};})(onBad);
+const rpEnd=o=>function(){const R=RUN,k=rpKey(R);if(R)R.ended=true;if(k)rpDrop(k);return o.apply(this,arguments);};
+endRun=rpEnd(endRun);learnEnd=rpEnd(learnEnd);bossEnd=rpEnd(bossEnd);
+function rpWrapClicks(sel,keyOf){document.querySelectorAll(sel).forEach(b=>{if(b.__rp)return;b.__rp=1;const o=b.onclick;if(!o)return;
+ b.onclick=function(e){const sv=rpGet(keyOf(b));if(sv){try{SND.click();}catch(x){}const p=$("cahier");if(p)p.classList.remove("on");rpAsk(sv,()=>o.call(b,e));return;}return o.call(b,e);};});}
+function rpBind(){rpWrapClicks("#soirs [data-l]",b=>"L:"+b.dataset.l);rpWrapClicks("#soirs [data-st]",b=>"st:"+b.dataset.st);rpWrapClicks("#bBoss",()=>"b");}
+renderMap=(function(o){return function(){const r=o.apply(this,arguments);try{rpBind();}catch(e){console.error(e);}return r;};})(renderMap);
+renderBiblio=(function(o){return function(){const r=o.apply(this,arguments);try{rpWrapClicks("#cList [data-bl]",b=>"L:"+b.dataset.bl);}catch(e){}return r;};})(renderBiblio);
+$("bPlay").onclick=(function(o){return function(e){const r=o.call(this,e);try{if(!$("quest").classList.contains("on")&&!RUN){const st=rpStore();if(REPRISE.purge(st))save();const b=REPRISE.latest(st);if(b)rpAsk(b,()=>rpFresh(b));}}catch(x){console.error(x);}return r;};})($("bPlay").onclick);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")rpSnap();});
+window.addEventListener("pagehide",rpSnap);
+(function(){const st=rpStore();if(REPRISE.purge(st))save();})();
+window.__rp={snap:rpSnap,store:rpStore,get:rpGet,resume:rpResume,drop:rpDrop};
 
 </script><!--CLAVIER--><style>/* CLAVIER iPad : mode « clavier ouvert » */
 html.kb-on,html.kb-on body{overflow:hidden!important;overscroll-behavior:none}
