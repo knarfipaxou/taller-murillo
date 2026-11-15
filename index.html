@@ -143,6 +143,16 @@ textarea#in:focus{outline:3px solid #f4d35e}
 .answer.hintw{color:#7a5a00;background:#fff6d6;border-color:#c9a227}.answer .gap{color:#c9a227}
 .scene{flex-direction:column}
 
+/* traductions françaises à côté de l'espagnol */
+.trfr{display:block;font-size:.82em;font-weight:600;font-style:italic;color:#1e4d7b;line-height:1.25;margin-top:2px}
+.pair{display:inline-block;vertical-align:top}
+.pair .trfr{margin-top:1px}
+.lesson .trfr,.ltab .trfr{font-size:.8em;color:#1e4d7b}
+.sentc .trfr,.parch .trfr,.answer .trfr,.wordc .trfr{font-size:.78em}
+.conj span .trfr{font-size:11px;color:#1e4d7b;font-weight:600;text-shadow:none}
+.trfr.later{display:none}
+.revealed .trfr.later,.trfr.later.show,#eMsg .trfr.later{display:block}
+
 /* VOIX : micro et Papa écoute */
 .vx{margin:6px 0;font-size:15px}
 .vxhide{display:none!important}
@@ -153,6 +163,8 @@ textarea#in:focus{outline:3px solid #f4d35e}
 .vxmic.rec,.vxrmic.rec{background:#d63b3b;border-color:#8c1f1f;color:#fff;animation:vxpulse 1s infinite}
 @keyframes vxpulse{50%{box-shadow:0 0 0 6px rgba(214,59,59,.3)}}
 .vxpapa{background:#ffe7a8;border-color:#a8781a}
+.vxlang{background:#f4f1e8;border-color:#5a4a28;font-size:16px;min-width:132px;min-height:52px;padding:8px 10px}
+.vxlang[data-lang="es-ES"]{background:#fde8d0;border-color:#8a3b12}
 .vxst{font-weight:700;font-size:14px}.vxst.vxon{color:#1d6fd0}.vxst.vxwarn{color:#b55d00}
 .vxlive{font-style:italic;color:#666;min-height:0;margin:4px 0}
 .vxchips{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}
@@ -233,6 +245,12 @@ const IOSAU={get:null,el:null,unlocked:false,
 
 /* ================= EL TALLER DE MURILLO : données ================= */
 const INTERRO=new Date(2026,10,19);
+function trfr(fr,later){return fr?`<span class="trfr${later?" later":""}">${fr}</span>`:"";}
+function pair(la,fr,later){return `<span class="pair">${la}${trfr(fr,later)}</span>`;}
+const PFR_SHORT={"1s":"je","2s":"tu","3s":"il, elle","1p":"nous","2p":"vous","3p":"ils, elles"};
+const SER_FR=["je suis","tu es","il est","nous sommes","vous êtes","ils sont"];
+const ESTAR_FR=["je suis","tu es","il est","nous sommes","vous êtes","ils sont"];
+const TENER_FR=["j'ai","tu as","il a","nous avons","vous avez","ils ont"];
 /* personnes */
 const PERS=["1s","2s","3s","1p","2p","3p"];
 const PRON={"1s":"yo","2s":"tú","3s":"él / ella / usted","1p":"nosotros / nosotras","2p":"vosotros / vosotras","3p":"ellos / ellas / ustedes"};
@@ -241,66 +259,66 @@ const REFL={"1s":"me","2s":"te","3s":"se","1p":"nos","2p":"os","3p":"se"};
 const END={ar:["o","as","a","amos","áis","an"],er:["o","es","e","emos","éis","en"],ir:["o","es","e","imos","ís","en"]};
 /* verbes : rad = radical de l'infinitif, drad = radical diphtongué, t = cas */
 const VERBS={
- contar:{fr:"raconter",rad:"cont",drad:"cuent",t:"ue",f:"ar"},
- empezar:{fr:"commencer",rad:"empez",drad:"empiez",t:"ie",f:"ar"},
- jugar:{fr:"jouer",rad:"jug",drad:"jueg",t:"u",f:"ar"},
- resolver:{fr:"résoudre",rad:"resolv",drad:"resuelv",t:"ue",f:"er"},
- sentirse:{fr:"se sentir",rad:"sent",drad:"sient",t:"ie",f:"ir",p:1},
- volver:{fr:"revenir",rad:"volv",drad:"vuelv",t:"ue",f:"er"},
- querer:{fr:"vouloir",rad:"quer",drad:"quier",t:"ie",f:"er"},
- preferir:{fr:"préférer",rad:"prefer",drad:"prefier",t:"ie",f:"ir"},
- venir:{fr:"venir",rad:"ven",drad:"vien",t:"ie",f:"ir",yo:"vengo"},
- sentarse:{fr:"s'asseoir",rad:"sent",drad:"sient",t:"ie",f:"ar",p:1},
- negarse:{fr:"refuser",rad:"neg",drad:"nieg",t:"ie",f:"ar",p:1},
- recordar:{fr:"se souvenir de",rad:"record",drad:"recuerd",t:"ue",f:"ar"},
- soler:{fr:"avoir l'habitude de",rad:"sol",drad:"suel",t:"ue",f:"er"},
- divertirse:{fr:"s'amuser",rad:"divert",drad:"diviert",t:"ie",f:"ir",p:1},
- perder:{fr:"perdre",rad:"perd",drad:"pierd",t:"ie",f:"er"},
- almorzar:{fr:"déjeuner",rad:"almorz",drad:"almuerz",t:"ue",f:"ar"},
- plegar:{fr:"plier",rad:"pleg",drad:"plieg",t:"ie",f:"ar"},
- mentir:{fr:"mentir",rad:"ment",drad:"mient",t:"ie",f:"ir"},
- intervenir:{fr:"intervenir",rad:"interven",drad:"intervien",t:"ie",f:"ir",yo:"intervengo"},
- pensar:{fr:"penser",rad:"pens",drad:"piens",t:"ie",f:"ar"},
- demostrar:{fr:"démontrer, exprimer",rad:"demostr",drad:"demuestr",t:"ue",f:"ar"},
- dormir:{fr:"dormir",rad:"dorm",drad:"duerm",t:"ue",f:"ir"},
- sentir:{fr:"ressentir",rad:"sent",drad:"sient",t:"ie",f:"ir"},
- proteger:{fr:"protéger",rad:"proteg",drad:"proteg",t:"no",f:"er"},
- hilar:{fr:"filer (la laine)",rad:"hil",drad:"hil",t:"no",f:"ar"},
- adivinar:{fr:"deviner",rad:"adivin",drad:"adivin",t:"no",f:"ar"},
- poder:{fr:"pouvoir",rad:"pod",drad:"pued",t:"ue",f:"er",nw:1},
- encontrar:{fr:"trouver",rad:"encontr",drad:"encuentr",t:"ue",f:"ar",nw:1},
- entender:{fr:"comprendre",rad:"entend",drad:"entiend",t:"ie",f:"er",nw:1},
- cerrar:{fr:"fermer",rad:"cerr",drad:"cierr",t:"ie",f:"ar",nw:1},
- volar:{fr:"voler (dans le ciel)",rad:"vol",drad:"vuel",t:"ue",f:"ar",nw:1},
- despertarse:{fr:"se réveiller",rad:"despert",drad:"despiert",t:"ie",f:"ar",p:1,nw:1},
- acostarse:{fr:"se coucher",rad:"acost",drad:"acuest",t:"ue",f:"ar",p:1,nw:1},
- hablar:{fr:"parler",rad:"habl",drad:"habl",t:"no",f:"ar",nw:1},
- comer:{fr:"manger",rad:"com",drad:"com",t:"no",f:"er",nw:1},
- vivir:{fr:"vivre",rad:"viv",drad:"viv",t:"no",f:"ir",nw:1}
+ contar:{fr:"raconter",frf:["je raconte","tu racontes","il raconte","nous racontons","vous racontez","ils racontent"],rad:"cont",drad:"cuent",t:"ue",f:"ar"},
+ empezar:{fr:"commencer",frf:["je commence","tu commences","il commence","nous commençons","vous commencez","ils commencent"],rad:"empez",drad:"empiez",t:"ie",f:"ar"},
+ jugar:{fr:"jouer",frf:["je joue","tu joues","il joue","nous jouons","vous jouez","ils jouent"],rad:"jug",drad:"jueg",t:"u",f:"ar"},
+ resolver:{fr:"résoudre",frf:["je résous","tu résous","il résout","nous résolvons","vous résolvez","ils résolvent"],rad:"resolv",drad:"resuelv",t:"ue",f:"er"},
+ sentirse:{fr:"se sentir",frf:["je me sens","tu te sens","il se sent","nous nous sentons","vous vous sentez","ils se sentent"],rad:"sent",drad:"sient",t:"ie",f:"ir",p:1},
+ volver:{fr:"revenir",frf:["je reviens","tu reviens","il revient","nous revenons","vous revenez","ils reviennent"],rad:"volv",drad:"vuelv",t:"ue",f:"er"},
+ querer:{fr:"vouloir",frf:["je veux","tu veux","il veut","nous voulons","vous voulez","ils veulent"],rad:"quer",drad:"quier",t:"ie",f:"er"},
+ preferir:{fr:"préférer",frf:["je préfère","tu préfères","il préfère","nous préférons","vous préférez","ils préfèrent"],rad:"prefer",drad:"prefier",t:"ie",f:"ir"},
+ venir:{fr:"venir",frf:["je viens","tu viens","il vient","nous venons","vous venez","ils viennent"],rad:"ven",drad:"vien",t:"ie",f:"ir",yo:"vengo"},
+ sentarse:{fr:"s'asseoir",frf:["je m'assieds","tu t'assieds","il s'assied","nous nous asseyons","vous vous asseyez","ils s'asseyent"],rad:"sent",drad:"sient",t:"ie",f:"ar",p:1},
+ negarse:{fr:"refuser",frf:["je refuse","tu refuses","il refuse","nous refusons","vous refusez","ils refusent"],rad:"neg",drad:"nieg",t:"ie",f:"ar",p:1},
+ recordar:{fr:"se souvenir de",frf:["je me souviens","tu te souviens","il se souvient","nous nous souvenons","vous vous souvenez","ils se souviennent"],rad:"record",drad:"recuerd",t:"ue",f:"ar"},
+ soler:{fr:"avoir l'habitude de",frf:["j'ai l'habitude","tu as l'habitude","il a l'habitude","nous avons l'habitude","vous avez l'habitude","ils ont l'habitude"],rad:"sol",drad:"suel",t:"ue",f:"er"},
+ divertirse:{fr:"s'amuser",frf:["je m'amuse","tu t'amuses","il s'amuse","nous nous amusons","vous vous amusez","ils s'amusent"],rad:"divert",drad:"diviert",t:"ie",f:"ir",p:1},
+ perder:{fr:"perdre",frf:["je perds","tu perds","il perd","nous perdons","vous perdez","ils perdent"],rad:"perd",drad:"pierd",t:"ie",f:"er"},
+ almorzar:{fr:"déjeuner",frf:["je déjeune","tu déjeunes","il déjeune","nous déjeunons","vous déjeunez","ils déjeunent"],rad:"almorz",drad:"almuerz",t:"ue",f:"ar"},
+ plegar:{fr:"plier",frf:["je plie","tu plies","il plie","nous plions","vous pliez","ils plient"],rad:"pleg",drad:"plieg",t:"ie",f:"ar"},
+ mentir:{fr:"mentir",frf:["je mens","tu mens","il ment","nous mentons","vous mentez","ils mentent"],rad:"ment",drad:"mient",t:"ie",f:"ir"},
+ intervenir:{fr:"intervenir",frf:["j'interviens","tu interviens","il intervient","nous intervenons","vous intervenez","ils interviennent"],rad:"interven",drad:"intervien",t:"ie",f:"ir",yo:"intervengo"},
+ pensar:{fr:"penser",frf:["je pense","tu penses","il pense","nous pensons","vous pensez","ils pensent"],rad:"pens",drad:"piens",t:"ie",f:"ar"},
+ demostrar:{fr:"démontrer, exprimer",frf:["je démontre","tu démontres","il démontre","nous démontrons","vous démontrez","ils démontrent"],rad:"demostr",drad:"demuestr",t:"ue",f:"ar"},
+ dormir:{fr:"dormir",frf:["je dors","tu dors","il dort","nous dormons","vous dormez","ils dorment"],rad:"dorm",drad:"duerm",t:"ue",f:"ir"},
+ sentir:{fr:"ressentir",frf:["je ressens","tu ressens","il ressent","nous ressentons","vous ressentez","ils ressentent"],rad:"sent",drad:"sient",t:"ie",f:"ir"},
+ proteger:{fr:"protéger",frf:["je protège","tu protèges","il protège","nous protégeons","vous protégez","ils protègent"],rad:"proteg",drad:"proteg",t:"no",f:"er"},
+ hilar:{fr:"filer (la laine)",frf:["je file","tu files","il file","nous filons","vous filez","ils filent"],rad:"hil",drad:"hil",t:"no",f:"ar"},
+ adivinar:{fr:"deviner",frf:["je devine","tu devines","il devine","nous devinons","vous devinez","ils devinent"],rad:"adivin",drad:"adivin",t:"no",f:"ar"},
+ poder:{fr:"pouvoir",frf:["je peux","tu peux","il peut","nous pouvons","vous pouvez","ils peuvent"],rad:"pod",drad:"pued",t:"ue",f:"er",nw:1},
+ encontrar:{fr:"trouver",frf:["je trouve","tu trouves","il trouve","nous trouvons","vous trouvez","ils trouvent"],rad:"encontr",drad:"encuentr",t:"ue",f:"ar",nw:1},
+ entender:{fr:"comprendre",frf:["je comprends","tu comprends","il comprend","nous comprenons","vous comprenez","ils comprennent"],rad:"entend",drad:"entiend",t:"ie",f:"er",nw:1},
+ cerrar:{fr:"fermer",frf:["je ferme","tu fermes","il ferme","nous fermons","vous fermez","ils ferment"],rad:"cerr",drad:"cierr",t:"ie",f:"ar",nw:1},
+ volar:{fr:"voler (dans le ciel)",frf:["je vole","tu voles","il vole","nous volons","vous volez","ils volent"],rad:"vol",drad:"vuel",t:"ue",f:"ar",nw:1},
+ despertarse:{fr:"se réveiller",frf:["je me réveille","tu te réveilles","il se réveille","nous nous réveillons","vous vous réveillez","ils se réveillent"],rad:"despert",drad:"despiert",t:"ie",f:"ar",p:1,nw:1},
+ acostarse:{fr:"se coucher",frf:["je me couche","tu te couches","il se couche","nous nous couchons","vous vous couchez","ils se couchent"],rad:"acost",drad:"acuest",t:"ue",f:"ar",p:1,nw:1},
+ hablar:{fr:"parler",frf:["je parle","tu parles","il parle","nous parlons","vous parlez","ils parlent"],rad:"habl",drad:"habl",t:"no",f:"ar",nw:1},
+ comer:{fr:"manger",frf:["je mange","tu manges","il mange","nous mangeons","vous mangez","ils mangent"],rad:"com",drad:"com",t:"no",f:"er",nw:1},
+ vivir:{fr:"vivre",frf:["je vis","tu vis","il vit","nous vivons","vous vivez","ils vivent"],rad:"viv",drad:"viv",t:"no",f:"ir",nw:1}
 };
 function conj(inf,p){const V=VERBS[inf],i=PERS.indexOf(p);let f=(i===0&&V.yo)?V.yo:((p==="1p"||p==="2p")?V.rad:V.drad)+END[V.f][i];return (V.p?REFL[p]+" ":"")+f;}
 /* la fiche d'exercices : sa réponse « his » */
 const FICHE=[
- {id:"a",s:"Nosotras",v:"contar",p:"1p",c:"una historia."},
- {id:"b",s:"Mis padres",v:"empezar",p:"3p",c:"su viaje a Madrid.",his:"empezan"},
- {id:"c",s:"¿Con quién",v:"jugar",p:"2s",c:"(tú) al bádminton?"},
- {id:"d",s:"Juan y tú",v:"resolver",p:"2p",c:"el misterio.",his:"resolvas"},
- {id:"e",s:"Yo",v:"sentirse",p:"1s",c:"feliz.",his:"sentís"},
- {id:"f",s:"Las alumnas",v:"volver",p:"3p",c:"del laboratorio de ciencias.",his:"volvan"},
- {id:"g",s:"Vosotras",v:"jugar",p:"2p",c:"al bingo."},
- {id:"h",s:"¿Qué",v:"querer",p:"3p",c:"(ustedes) comer?"},
- {id:"i",s:"Tú",v:"preferir",p:"2s",c:"cantar que bailar.",his:"preferís"},
- {id:"j",s:"Pablo y yo",v:"venir",p:"1p",c:"de Madrid."},
- {id:"k",s:"Luis",v:"sentarse",p:"3s",c:"a mi lado.",his:"sentan"},
- {id:"l",s:"Ellos",v:"negarse",p:"3p",c:"a obedecer.",his:"negan"},
- {id:"m",s:"Usted",v:"recordar",p:"3s",c:"este momento feliz.",his:"recordan"},
- {id:"n",s:"Yo",v:"soler",p:"1s",c:"acostarme temprano.",his:"sola"},
- {id:"o",s:"Mis hermanos",v:"divertirse",p:"3p",c:"mucho en Disneylandia.",his:"divertan"},
- {id:"p",s:"Nosotras",v:"perder",p:"1p",c:"paciencia rápidamente.",his:"perdamos"},
- {id:"q",s:"¿A qué hora",v:"almorzar",p:"2s",c:"tú?",his:"almorzas"},
- {id:"r",s:"Mi madre",v:"plegar",p:"3s",c:"la ropa.",his:"plega"},
- {id:"s",s:"Este chico",v:"mentir",p:"3s",c:"mucho.",his:"mentan"},
- {id:"t",s:"Vosotros",v:"intervenir",p:"2p",c:"en el debate.",his:"intervenáis"}
+ {id:"a",s:"Nosotras",v:"contar",p:"1p",c:"una historia.",fr:"Nous racontons une histoire."},
+ {id:"b",s:"Mis padres",v:"empezar",p:"3p",c:"su viaje a Madrid.",fr:"Mes parents commencent leur voyage à Madrid.",his:"empezan"},
+ {id:"c",s:"¿Con quién",v:"jugar",p:"2s",c:"(tú) al bádminton?",fr:"Avec qui joues-tu au badminton ?"},
+ {id:"d",s:"Juan y tú",v:"resolver",p:"2p",c:"el misterio.",fr:"Juan et toi, vous résolvez le mystère.",his:"resolvas"},
+ {id:"e",s:"Yo",v:"sentirse",p:"1s",c:"feliz.",fr:"Je me sens heureux.",his:"sentís"},
+ {id:"f",s:"Las alumnas",v:"volver",p:"3p",c:"del laboratorio de ciencias.",fr:"Les élèves reviennent du laboratoire de sciences.",his:"volvan"},
+ {id:"g",s:"Vosotras",v:"jugar",p:"2p",c:"al bingo.",fr:"Vous jouez au bingo."},
+ {id:"h",s:"¿Qué",v:"querer",p:"3p",c:"(ustedes) comer?",fr:"Que voulez-vous manger ?"},
+ {id:"i",s:"Tú",v:"preferir",p:"2s",c:"cantar que bailar.",fr:"Tu préfères chanter plutôt que danser.",his:"preferís"},
+ {id:"j",s:"Pablo y yo",v:"venir",p:"1p",c:"de Madrid.",fr:"Pablo et moi, nous venons de Madrid."},
+ {id:"k",s:"Luis",v:"sentarse",p:"3s",c:"a mi lado.",fr:"Luis s'assied à côté de moi.",his:"sentan"},
+ {id:"l",s:"Ellos",v:"negarse",p:"3p",c:"a obedecer.",fr:"Ils refusent d'obéir.",his:"negan"},
+ {id:"m",s:"Usted",v:"recordar",p:"3s",c:"este momento feliz.",fr:"Vous vous souvenez de ce moment heureux.",his:"recordan"},
+ {id:"n",s:"Yo",v:"soler",p:"1s",c:"acostarme temprano.",fr:"J'ai l'habitude de me coucher tôt.",his:"sola"},
+ {id:"o",s:"Mis hermanos",v:"divertirse",p:"3p",c:"mucho en Disneylandia.",fr:"Mes frères s'amusent beaucoup à Disneyland.",his:"divertan"},
+ {id:"p",s:"Nosotras",v:"perder",p:"1p",c:"paciencia rápidamente.",fr:"Nous perdons vite patience.",his:"perdamos"},
+ {id:"q",s:"¿A qué hora",v:"almorzar",p:"2s",c:"tú?",fr:"À quelle heure déjeunes-tu ?",his:"almorzas"},
+ {id:"r",s:"Mi madre",v:"plegar",p:"3s",c:"la ropa.",fr:"Ma mère plie le linge.",his:"plega"},
+ {id:"s",s:"Este chico",v:"mentir",p:"3s",c:"mucho.",fr:"Ce garçon ment beaucoup.",his:"mentan"},
+ {id:"t",s:"Vosotros",v:"intervenir",p:"2p",c:"en el debate.",fr:"Vous intervenez dans le débat.",his:"intervenáis"}
 ];
 /* verbes de la leçon et nouveaux : complément */
 const EXTRA={pensar:"en las vacaciones.",querer:"un helado.",demostrar:"su talento.",dormir:"mucho el domingo.",jugar:"con el perro.",sentir:"alegría.",proteger:"al pajarito.",hilar:"la lana.",adivinar:"el título del cuadro.",
@@ -319,20 +337,20 @@ const PIECES={
  cesta:{n:"la cesta",cell:[1,0]}
 };
 const PLACE=[
- {k:"jesus",t:"En el primer plano, en el centro, está el niño Jesús."},
- {k:"maria",t:"María está a la izquierda, en el segundo plano. Está sentada y hila."},
- {k:"jose",t:"San José está a la derecha, en el segundo plano. Está sentado."},
- {k:"perro",t:"El perro blanco está en el primer plano, a la derecha. Quiere jugar con el pajarito."},
- {k:"cesta",t:"La cesta está en el primer plano, a la izquierda, a los pies de María."}
+ {k:"jesus",t:"En el primer plano, en el centro, está el niño Jesús.",fr:"Au premier plan, au centre, il y a l'enfant Jésus."},
+ {k:"maria",t:"María está a la izquierda, en el segundo plano. Está sentada y hila.",fr:"Marie est à gauche, au second plan. Elle est assise et file la laine."},
+ {k:"jose",t:"San José está a la derecha, en el segundo plano. Está sentado.",fr:"Saint Joseph est à droite, au second plan. Il est assis."},
+ {k:"perro",t:"El perro blanco está en el primer plano, a la derecha. Quiere jugar con el pajarito.",fr:"Le chien blanc est au premier plan, à droite. Il veut jouer avec le petit oiseau."},
+ {k:"cesta",t:"La cesta está en el primer plano, a la izquierda, a los pies de María.",fr:"Le panier est au premier plan, à gauche, aux pieds de Marie."}
 ];
 /* décrire : l'élève écrit une phrase avec estar */
 const DESC=[
  {k:"jesus",who:["el nino jesus","el nino","jesus","el hijo"],plur:0,pos:[["primer plano"],["centro"]],post:[["de pie"]],act:[["protege al pajarito","protege el pajarito"],["tiene el pajarito","coge el pajarito","pajarito en la mano","pajarito en su mano"]],
-  model:"El niño Jesús está en el primer plano, en el centro. Está de pie."},
- {k:"maria",who:["maria","la virgen","la madre","la virgen maria"],plur:0,pos:[["izquierda"]],post:[["sentada"]],act:[["hila"]],model:"María está a la izquierda. Está sentada y hila."},
- {k:"jose",who:["jose","san jose","el padre"],plur:0,pos:[["derecha"]],post:[["sentado"]],act:[],model:"San José está a la derecha. Está sentado."},
- {k:"perro",who:["el perro","perro"],plur:0,pos:[["primer plano"],["derecha"]],post:[],act:[["quiere jugar"]],model:"El perro está en el primer plano, a la derecha. Quiere jugar con el pajarito."},
- {k:"padres",who:["jose y maria","maria y jose","los padres"],plur:1,pos:[],post:[["sentados"]],act:[],model:"José y María están sentados."}
+  model:"El niño Jesús está en el primer plano, en el centro. Está de pie.",modelfr:"L'enfant Jésus est au premier plan, au centre. Il est debout."},
+ {k:"maria",who:["maria","la virgen","la madre","la virgen maria"],plur:0,pos:[["izquierda"]],post:[["sentada"]],act:[["hila"]],model:"María está a la izquierda. Está sentada y hila.",modelfr:"Marie est à gauche. Elle est assise et file la laine."},
+ {k:"jose",who:["jose","san jose","el padre"],plur:0,pos:[["derecha"]],post:[["sentado"]],act:[],model:"San José está a la derecha. Está sentado.",modelfr:"Saint Joseph est à droite. Il est assis."},
+ {k:"perro",who:["el perro","perro"],plur:0,pos:[["primer plano"],["derecha"]],post:[],act:[["quiere jugar"]],model:"El perro está en el primer plano, a la derecha. Quiere jugar con el pajarito.",modelfr:"Le chien est au premier plan, à droite. Il veut jouer avec le petit oiseau."},
+ {k:"padres",who:["jose y maria","maria y jose","los padres"],plur:1,pos:[],post:[["sentados"]],act:[],model:"José y María están sentados.",modelfr:"Joseph et Marie sont assis."}
 ];
 /* es / está / tiene */
 const SET=[
@@ -356,6 +374,40 @@ const SET=[
  {s:"Nosotros ___ de pie.",a:"estamos",c:"estar",why:"La posture : estar, nosotros."},
  {s:"Picasso ___ un pintor español.",a:"es",c:"ser",why:"Profession et nationalité : ser."},
  {s:"Murillo ___ de Sevilla.",a:"es",c:"ser",why:"L'origine : ser de."}
+];
+
+const SET_FR=[
+ "José a les cheveux gris.",
+ "José est assis à droite.",
+ "José est grand et fort.",
+ "Marie est à gauche.",
+ "Marie a les yeux marron.",
+ "Le chien est blanc.",
+ "Le chien est au premier plan.",
+ "Marie et Joseph sont assis.",
+ "Les parents sont sympathiques.",
+ "L'enfant est debout.",
+ "L'enfant a un petit oiseau dans la main.",
+ "J'ai les cheveux raides.",
+ "Je suis grand et mince.",
+ "Tu es en classe.",
+ "Le roi Felipe a une barbe et une moustache.",
+ "Le roi Felipe a les cheveux blancs.",
+ "La reine Letizia est mince et belle.",
+ "Nous sommes debout.",
+ "Picasso est un peintre espagnol.",
+ "Murillo est de Séville."
+];
+const ESTAR_S_FR=[
+ "Je suis debout au centre.",
+ "Tu es assis à gauche.",
+ "Le chien est au premier plan.",
+ "Nous sommes au second plan.",
+ "Vous êtes assises.",
+ "Joseph et Marie sont assis.",
+ "Vous êtes à droite (usted).",
+ "Vous êtes au musée du Prado (ustedes).",
+ "L'enfant Jésus est dans les bras de son père."
 ];
 const SER={"1s":"soy","2s":"eres","3s":"es","1p":"somos","2p":"sois","3p":"son"};
 const ESTAR={"1s":"estoy","2s":"estás","3s":"está","1p":"estamos","2p":"estáis","3p":"están"};
@@ -440,19 +492,19 @@ const NUM=["","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve",
 const YEARS={2025:"dos mil veinticinco",2026:"dos mil veintiséis",2027:"dos mil veintisiete"};
 /* récitations (cahier) : pour taper, dicter ou Papa écoute */
 const FICHES={
- c1:{title:"Le tableau 1 : qui est où",txt:"La Sagrada familia del pajarito es una pintura que representa a la Virgen María y San José con su hijo Jesús. En el primer plano, en el centro, está el niño Jesús. María está a la izquierda y San José está a la derecha.",
+ c1:{title:"Le tableau 1 : qui est où",lang:"es-ES",txtfr:"La Sainte Famille à l'oiseau est une peinture qui représente la Vierge Marie et saint Joseph avec leur fils Jésus. Au premier plan, au centre, il y a l'enfant Jésus. Marie est à gauche et saint Joseph est à droite.",txt:"La Sagrada familia del pajarito es una pintura que representa a la Virgen María y San José con su hijo Jesús. En el primer plano, en el centro, está el niño Jesús. María está a la izquierda y San José está a la derecha.",
   g:[["sagrada familia del pajarito"],["pintura"],["virgen maria","maria"],["san jose","jose"],["su hijo jesus","hijo"],["primer plano"],["en el centro","centro"],["nino jesus"],["maria esta a la izquierda","izquierda"],["jose esta a la derecha","derecha"]],crit:[5,8,9]},
- c2:{title:"Le tableau 2 : pourquoi il est original",txt:"Es original porque, sin el título, no podemos adivinar que el pintor representa a la Sagrada Familia. Representa una escena de la vida cotidiana. José y María están sentados. María hila y el niño Jesús protege al pajarito. El perro quiere jugar con el pajarito.",
+ c2:{title:"Le tableau 2 : pourquoi il est original",lang:"es-ES",txtfr:"Il est original parce que, sans le titre, on ne peut pas deviner que le peintre représente la Sainte Famille. Il représente une scène de la vie quotidienne. Joseph et Marie sont assis. Marie file la laine et l'enfant Jésus protège le petit oiseau. Le chien veut jouer avec le petit oiseau.",txt:"Es original porque, sin el título, no podemos adivinar que el pintor representa a la Sagrada Familia. Representa una escena de la vida cotidiana. José y María están sentados. María hila y el niño Jesús protege al pajarito. El perro quiere jugar con el pajarito.",
   g:[["original"],["sin el titulo"],["no podemos adivinar","adivinar"],["sagrada familia"],["vida cotidiana"],["estan sentados"],["maria hila","hila"],["protege al pajarito","protege"],["el perro quiere jugar","quiere jugar"]],crit:[1,4,5]},
- c3:{title:"Le tableau 3 : ce qu'il m'inspire",txt:"La pintura me inspira serenidad y alegría porque es una escena tierna, simple y tranquila.",
+ c3:{title:"Le tableau 3 : ce qu'il m'inspire",lang:"es-ES",txtfr:"Le tableau m'inspire la sérénité et la joie parce que c'est une scène tendre, simple et tranquille.",txt:"La pintura me inspira serenidad y alegría porque es una escena tierna, simple y tranquila.",
   g:[["me inspira"],["serenidad"],["alegria"],["tierna"],["simple"],["tranquila"]],crit:[0]},
- estar:{title:"ESTAR au présent",txt:"estoy, estás, está, estamos, estáis, están",forms:["estoy","estas","esta","estamos","estais","estan"]},
+ estar:{title:"ESTAR au présent",lang:"es-ES",txt:"estoy, estás, está, estamos, estáis, están",forms:["estoy","estas","esta","estamos","estais","estan"]},
  pensar:{title:"PENSAR (e → ie)",txt:"pienso, piensas, piensa, pensamos, pensáis, piensan",forms:["pienso","piensas","piensa","pensamos","pensais","piensan"]},
  querer:{title:"QUERER (e → ie)",txt:"quiero, quieres, quiere, queremos, queréis, quieren",forms:["quiero","quieres","quiere","queremos","quereis","quieren"]},
  demostrar:{title:"DEMOSTRAR (o → ue)",txt:"demuestro, demuestras, demuestra, demostramos, demostráis, demuestran",forms:["demuestro","demuestras","demuestra","demostramos","demostrais","demuestran"]},
  dormir:{title:"DORMIR (o → ue)",txt:"duermo, duermes, duerme, dormimos, dormís, duermen",forms:["duermo","duermes","duerme","dormimos","dormis","duermen"]},
  jugar:{title:"JUGAR (u → ue)",txt:"juego, juegas, juega, jugamos, jugáis, juegan",forms:["juego","juegas","juega","jugamos","jugais","juegan"]},
- texto:{title:"Ton texte sur le tableau (60 mots)",txt:"Modèle : La Sagrada familia del pajarito es una pintura de Murillo, un pintor del Barroco español. En el primer plano, en el centro, está el niño Jesús. Está de pie y tiene un pajarito en la mano. María está a la izquierda, está sentada y hila. San José está a la derecha, está sentado. Tiene el pelo negro y barba. El perro blanco quiere jugar con el pajarito. La pintura me inspira serenidad y alegría porque es una escena tierna y tranquila."}
+ texto:{title:"Ton texte sur le tableau (60 mots)",lang:"es-ES",txtfr:"Modèle : La Sainte Famille à l'oiseau est une peinture de Murillo, un peintre du Baroque espagnol. Au premier plan, au centre, il y a l'enfant Jésus. Il est debout et a un petit oiseau dans la main. Marie est à gauche, elle est assise et file la laine. Saint Joseph est à droite, il est assis. Il a les cheveux noirs et une barbe. Le chien blanc veut jouer avec le petit oiseau. Le tableau m'inspire la sérénité et la joie parce que c'est une scène tendre et tranquille.",txt:"Modèle : La Sagrada familia del pajarito es una pintura de Murillo, un pintor del Barroco español. En el primer plano, en el centro, está el niño Jesús. Está de pie y tiene un pajarito en la mano. María está a la izquierda, está sentada y hila. San José está a la derecha, está sentado. Tiene el pelo negro y barba. El perro blanco quiere jugar con el pajarito. La pintura me inspira serenidad y alegría porque es una escena tierna y tranquila."}
 };
 
 /* ================= VOIX : réciter au micro, et « Papa écoute » (partagé entre les jeux) =================
@@ -466,7 +518,7 @@ const VOIX={bars:{},pending:null,denied:false,cur:null,
  attach(id,o){
   const B={id,o,field:o.field,res:null,redoPi:null,buf:"",last:null,editI:-1};this.bars[id]=B;
   const el=document.createElement("div");el.className="vx";el.id="vx-"+id;
-  el.innerHTML=`<div class="vxrow"><button type="button" class="vxb vxmic">🎤 Dicter</button><button type="button" class="vxb vxpapa">👂 Papa écoute</button><span class="vxst"></span></div>
+  el.innerHTML=`<div class="vxrow"><button type="button" class="vxb vxmic">🎤 Dicter</button><button type="button" class="vxb vxlang vxhide" title="Langue du micro">🇫🇷 français</button><button type="button" class="vxb vxpapa">👂 Papa écoute</button><span class="vxst"></span></div>
    <div class="vxlive"></div><div class="vxchips"></div>
    <div class="vxedit vxhide"><input class="vxein" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"><button type="button" class="vxb vxeok">✔ Garder</button><button type="button" class="vxb vxedel">🗑 Effacer</button></div>
    <div class="vxredo vxhide"><div class="vxrt"></div><button type="button" class="vxb vxrmic">🎤 Redire cette partie</button><button type="button" class="vxb vxrkb">⌨️ Taper cette partie</button>
@@ -475,6 +527,7 @@ const VOIX={bars:{},pending:null,denied:false,cur:null,
   const nb=e=>e.addEventListener("pointerdown",ev=>ev.preventDefault());
   el.querySelectorAll("button").forEach(nb);
   q(".vxmic").onclick=()=>this.toggle(B,"main");
+  q(".vxlang").onclick=()=>this.toggleLang(B);
   q(".vxpapa").onclick=()=>this.papaOpen(B);
   q(".vxrmic").onclick=()=>this.toggle(B,"redo");
   q(".vxrkb").onclick=()=>{q(".vxrkbox").classList.remove("vxhide");q(".vxrin").value="";q(".vxrin").focus();};
@@ -485,8 +538,18 @@ const VOIX={bars:{},pending:null,denied:false,cur:null,
   B.field.addEventListener("input",()=>this.chips(B));
   if(!this.SR()||this.denied)q(".vxmic").classList.add("vxhide"),q(".vxrmic").classList.add("vxhide");
   setInterval(()=>this.tick(B),400);this.tick(B);return B;},
- tick(B){const vis=!!(B.field.offsetParent||B.field.getClientRects().length);B.q(".vxrow").classList.toggle("vxhide",!vis);
+ langOf(B){const auto=(typeof B.o.lang==="function"?B.o.lang():B.o.lang)||"fr-FR";if(B.autoLang!==auto){B.autoLang=auto;B.langOver=null;}if(B.langOver)return B.langOver;return auto;},
+langLabel(code){return code==="es-ES"?"🇪🇸 espagnol":"🇫🇷 français";},
+syncLang(B){const btn=B.q(".vxlang");if(!btn)return;const langs=B.o.langs;if(!langs||langs.length<2){btn.classList.add("vxhide");return;}
+  btn.classList.remove("vxhide");const cur=this.langOf(B);btn.textContent=this.langLabel(cur);btn.dataset.lang=cur;
+  btn.title="Langue du micro : "+(cur==="es-ES"?"espagnol":"français")+". Touche pour changer pour cette question.";},
+setQuestionLang(id){const B=this.bars[id];if(!B)return;B.langOver=null;this.syncLang(B);},
+toggleLang(B){const langs=B.o.langs||["fr-FR","es-ES"];const cur=this.langOf(B);const i=Math.max(0,langs.indexOf(cur));B.langOver=langs[(i+1)%langs.length];
+  this.syncLang(B);this.say(B,"Le micro écoute maintenant en "+(B.langOver==="es-ES"?"espagnol":"français")+".","vxon");
+  if(this.cur===B&&B.on){const mode=B.mode;this.stop(B);const self=this;setTimeout(()=>{if(!self.denied)self.start(B,mode);},350);}},
+tick(B){const vis=!!(B.field.offsetParent||B.field.getClientRects().length);B.q(".vxrow").classList.toggle("vxhide",!vis);
   B.q(".vxpapa").classList.toggle("vxhide",!(B.o.papaOK?B.o.papaOK():true));
+  if(vis)this.syncLang(B);
   if(!vis){B.q(".vxchips").classList.add("vxhide");B.q(".vxedit").classList.add("vxhide");if(this.cur===B&&B.mode==="main")this.stop(B);}
   else B.q(".vxchips").classList.remove("vxhide");
   if(B.field.value!==B.last)this.chips(B);},
@@ -504,14 +567,14 @@ const VOIX={bars:{},pending:null,denied:false,cur:null,
  start(B,mode){const SR=this.SR();if(!SR||this.denied){this.unavailable(B,this.denied);return;}
   if(this.cur)this.stop(this.cur);B.mode=mode;B.used=true;B.buf="";this.cur=B;B.on=true;
   let r;try{r=new SR();}catch(e){this.unavailable(B,false);return;}B.rec=r;
-  r.lang=(B.o.lang||"fr-FR");r.interimResults=true;r.continuous=true;r.maxAlternatives=1;
+  r.lang=this.langOf(B);r.interimResults=true;r.continuous=true;r.maxAlternatives=1;
   r.onresult=e=>{let interim="";for(let i=e.resultIndex;i<e.results.length;i++){const x=e.results[i];if(x.isFinal)this.chunk(B,x[0].transcript);else interim+=x[0].transcript;}
    B.q(".vxlive").textContent=interim?"… "+interim:"";};
   r.onerror=e=>{const er=e&&e.error;if(er==="not-allowed"||er==="service-not-allowed"||er==="audio-capture"){B.on=false;this.unavailable(B,er!=="audio-capture");}};
   r.onend=()=>{this.audio();if(B.on&&this.cur===B){setTimeout(()=>{if(B.on&&this.cur===B){try{r.start();}catch(_){}}},250);return;}this.ended(B);};
   try{r.start();}catch(e){this.unavailable(B,false);return;}
   const btn=B.q(mode==="redo"?".vxrmic":".vxmic");btn.classList.add("rec");btn.textContent="⏹ J'ai fini";
-  this.say(B,mode==="redo"?"Je t'écoute. Redis seulement cette partie.":"Je t'écoute. Récite phrase par phrase, je recopie à la suite.","vxon");this.chips(B);},
+  const lab=this.langOf(B)==="es-ES"?" (en espagnol)":" (en français)";this.say(B,mode==="redo"?"Je t'écoute. Redis seulement cette partie."+lab:"Je t'écoute. Récite phrase par phrase, je recopie à la suite."+lab,"vxon");this.chips(B);},
  stop(B){B.on=false;try{B.rec&&B.rec.stop();}catch(e){}if(!B.rec)this.ended(B);setTimeout(()=>{if(this.cur===B)this.ended(B);},900);},
  ended(B){if(this.cur!==B)return;this.cur=null;this.audio();B.q(".vxlive").textContent="";
   B.q(".vxmic").classList.remove("rec");B.q(".vxmic").textContent="🎤 Dicter";B.q(".vxrmic").classList.remove("rec");B.q(".vxrmic").textContent="🎤 Redire cette partie";
@@ -667,12 +730,12 @@ const PMAP={yo:"1s",je:"1s",tu:"2s",el:"3s",ella:"3s",usted:"3s",il:"3s",elle:"3
 const SUBJP=new Set(["yo","tu","el","ella","usted","nosotros","nosotras","vosotros","vosotras","ellos","ellas","ustedes"]);
 const ok=(msg,x)=>Object.assign({st:"ok",msg},x||{});
 const ko=(msg,x)=>Object.assign({st:"ko",msg},x||{});
-function miniTable(inf,p){return `<div class="conj">${PERS.map(q=>`<span class="${q===p?"ing":""}"><small>${PRON[q].split(" / ")[0]}</small>${esc(conj(inf,q))}</span>`).join("")}</div>`;}
+function miniTable(inf,p){const V=VERBS[inf];return `<div class="conj">${PERS.map((q,i)=>`<span class="${q===p?"ing":""}"><small>${PRON[q].split(" / ")[0]}</small>${esc(conj(inf,q))}${trfr(V.frf&&V.frf[i]||"")}</span>`).join("")}</div>`;}
 function anvilHTML(inf,p,stage,melted){const V=VERBS[inf],base=inf.replace(/se$/,""),end=base.slice(-2);
  const rad=V.rad,blocks=[...rad].map((ch,i)=>`<i class="lt${"eou".includes(ch)&&i===rad.length-[...rad].reverse().findIndex(c=>"eou".includes(c))-1?" vw":""}">${ch}</i>`).join("");
  return `<div class="forge"><div class="ingot${melted?" melt":""}" id="ingot"></div><div class="anv"><div class="ablocks">${blocks}<i class="lt endb">${end}</i>${V.p?'<i class="lt seb">se</i>':""}</div><div class="abase"></div></div>
   <div class="vinfo"><b>${base.toUpperCase()}${V.p?"SE":""}</b> <span class="mut">(${esc(V.fr)})</span>${V.nw?` <span class="tagv">${TLAB[V.t]}</span>`:""}<br><span class="mut small">Verbe en -${V.f.toUpperCase()}</span></div></div>`;}
-function sentHTML(it,fill,cls){const V=VERBS[it.v];return `<div class="sentc"><span>${esc(it.s)}</span> <b class="blank ${cls||""}">${fill?esc(fill):"______"}</b> <span class="inf">(${it.v})</span> <span>${esc(it.c)}</span></div>${it.his?`<div class="hisrow">Sur ta fiche, tu avais écrit : <s class="hisw">${esc(it.his)}</s></div>`:""}`;}
+function sentHTML(it,fill,cls){const V=VERBS[it.v];const fr=it.fr||"";return `<div class="sentc"><span>${esc(it.s)}</span> <b class="blank ${cls||""}">${fill?esc(fill):"______"}</b> <span class="inf">(${it.v}${V&&V.fr?" : "+esc(V.fr):""})</span> <span>${esc(it.c)}</span>${fr?trfr(fr):""}</div>${it.his?`<div class="hisrow">Sur ta fiche, tu avais écrit : <s class="hisw">${esc(it.his)}</s></div>`:""}`;}
 /* diagnostic d'une forme conjuguée */
 function diagForm(v,inf,p){const V=VERBS[inf],i=PERS.indexOf(p),exp=conj(inf,p);const c=cmpForm(v,[exp]);
  let ut=toks(v);if(ut.length>1&&SUBJP.has(ut[0])&&!(ut[0]==="te"))ut.shift();
@@ -724,7 +787,7 @@ function extraItem(inf){const V=VERBS[inf];let pool=PERS.slice();if(V.yo)pool=po
 let PLACED={};
 function placeItem(P){return {id:"pl:"+P.k,steps:[{k:"place",title:"Placer les personnages",noInput:true,good:{pc:P.k,cell:PIECES[P.k].cell.join(",")},
  scene:()=>`<div class="pwrap">${painting({placed:PLACED,grid:true,labels:RUN&&RUN.tries>=2})}<div class="tray" id="tray">${Object.keys(PIECES).filter(k=>!PLACED[k]).map(k=>`<button class="pc" data-pc="${k}">${pix(SPR[k])}</button>`).join("")}</div></div>`,
- prompt:`<span class="es">${esc(P.t)}</span><br><span class="small mut">Touche le bon personnage, puis la bonne case du tableau.</span>`,
+ prompt:`<span class="es">${esc(P.t)}</span>${P.fr?trfr(P.fr):""}<br><span class="small mut">Touche le bon personnage, puis la bonne case du tableau.</span>`,
  hint:"izquierda = gauche, derecha = droite, centro = milieu. Primer plano = devant (en bas), segundo plano = derrière (en haut).",
  checkPlace(pc,cell){if(pc!==P.k)return ko("Ce n'est pas le personnage de la phrase. Relis bien le nom.");const [r,c]=cell.split(",").map(Number),[er,ec]=PIECES[P.k].cell;
   if(r===er&&c===ec){PLACED[P.k]=true;return ok(`✔ ${esc(P.t)}`);}
@@ -748,12 +811,12 @@ function descItem(D){const keys=D.k==="padres"?["maria","jose"]:[D.k];
   if(agr)return ko("Accord ! "+agr);
   if(!hit.length)return ko("Dis où il est (a la izquierda, en el centro…) ou sa posture (sentado, de pie).");
   const accOk=raw.some(t=>t==="está"||t==="están");
-  if(!accOk)return {st:"near",msg:`🟠 Presque ! Sans accent, « esta » veut dire « cette ». On écrit <b>${D.plur?"están":"está"}</b>.`,after:`<p class="es model">${esc(D.model)}</p>`};
-  return ok("✔ Très bien décrit !",{after:`<p class="es model">Modèle du cours : ${esc(D.model)}</p>`});}}]};}
+  if(!accOk)return {st:"near",msg:`🟠 Presque ! Sans accent, « esta » veut dire « cette ». On écrit <b>${D.plur?"están":"está"}</b>.`,after:`<p class="es model">${esc(D.model)}${D.modelfr?trfr(D.modelfr):""}</p>`};
+  return ok("✔ Très bien décrit !",{after:`<p class="es model">Modèle du cours : ${esc(D.model)}${D.modelfr?trfr(D.modelfr):""}</p>`});}}]};}
 /* ---------- es / está / tiene ---------- */
 const CATOF=w=>{const n=norm(w);for(const[c,T] of [["ser",SER],["estar",ESTAR],["tener",TENER]])if(Object.values(T).map(norm).includes(n))return c;return null;};
 const SETRULE="<b>📘 La règle :</b> <b>es</b> = il est (description, caractère, origine, métier). <b>está</b> = où il est, sa posture (sentado, de pie). <b>tiene</b> = il a (el pelo, los ojos, barba, un objeto).";
-function setItem(i){const X=SET[i];return {id:"se:"+i,steps:[{k:"set",title:"Es, está ou tiene ?",scene:()=>`<div class="sentc big">${esc(X.s).replace("___",'<b class="blank">______</b>')}</div>`,
+function setItem(i){const X=SET[i];return {id:"se:"+i,steps:[{k:"set",title:"Es, está ou tiene ?",scene:()=>`<div class="sentc big">${esc(X.s).replace("___",'<b class="blank">______</b>')}${trfr(SET_FR[i],true)}</div>`,
  prompt:"Tape le verbe qui manque : ser, estar ou tener, bien conjugué.",good:X.a,hint:X.why.split(":")[0]+".",rule:SETRULE,
  check(v){const r=cmpForm(v,[X.a]);if(r.st!=="ko"){r.msg=(r.st==="near"?"🟠 "+r.msg:"✔ ")+" "+X.why;r.after=`<div class="sentc big">${esc(X.s).replace("___",`<b class="blank done">${X.a}</b>`)}</div>`;return r;}
   const c=CATOF(v);if(c===X.c)return ko(`Bon verbe (${c}), mais pas la bonne personne. Qui est le sujet ?`);
@@ -766,7 +829,7 @@ function estarTable(p){return {id:"es:"+p,steps:[{k:"estar",title:"ESTAR",scene:
  prompt:`ESTAR au présent : <b>${PRON[p]}</b> → ?`,good:ESTAR[p],hint:"estoy, estás, está, estamos, estáis, están.",rule:"<b>📘 ESTAR :</b> estoy, estás, está, estamos, estáis, están. On s'en sert pour situer et pour la posture.",
  check(v){const r=cmpForm(v,[ESTAR[p]]);if(r.st!=="ko"){r.msg=r.st==="near"?"🟠 "+r.msg:`✔ ${PRON[p].split(" / ")[0]} <b>${ESTAR[p]}</b>`;return r;}
   if(CATOF(v)==="ser")return ko("Ça, c'est ser. On veut estar.");if(CATOF(v)==="estar")return ko("C'est bien estar, mais pas cette personne.");return ko("Pas encore.");}}]};}
-function estarSent(i){const X=ESTAR_S[i];return {id:"es:s"+i,steps:[{k:"estar",title:"ESTAR dans une phrase",scene:()=>`<div class="sentc big">${esc(X.s).replace("___",'<b class="blank">______</b>')}</div>`,
+function estarSent(i){const X=ESTAR_S[i];return {id:"es:s"+i,steps:[{k:"estar",title:"ESTAR dans une phrase",scene:()=>`<div class="sentc big">${esc(X.s).replace("___",'<b class="blank">______</b>')}${trfr(ESTAR_S_FR[i],true)}</div>`,
  prompt:"Complète avec estar conjugué.",good:ESTAR[X.p],hint:"Qui est le sujet ? Usted et ustedes = 3e personne.",rule:"<b>📘 ESTAR :</b> estoy, estás, está, estamos, estáis, están.",
  check(v){const r=cmpForm(v,[ESTAR[X.p]]);if(r.st!=="ko"){r.msg=r.st==="near"?"🟠 "+r.msg:"✔ "+esc(X.s.replace("___",ESTAR[X.p]));return r;}
   if(CATOF(v)==="estar")return ko(/usted/i.test(X.s)?"Piège : usted et ustedes se conjuguent à la 3e personne.":"Bon verbe, mauvaise personne.");return ko("Il faut estar ici (situer ou posture).");}}]};}
@@ -867,11 +930,18 @@ function closeEnc(){try{if(VOIX.cur)VOIX.stop(VOIX.cur);}catch(e){}$("enc").clas
 function startStation(k){const D=ST[k];let pl=D.pool();const list=D.pick?D.pick(pl):D.ordered?pl:prio(pl).slice(0,D.n);
  if(k==="placer")PLACED={};
  RUN={mode:"st",st:k,q:list.map(x=>x.make(false)),qk:list.map(x=>x.key),mk:list,qi:0,firstOK:0,reps:{}};openEnc();startItem();}
+function micLang(){const s=typeof stepNow==="function"?stepNow():null;if(!s)return "es-ES";
+ if(s.lang)return s.lang;if(s.fiche&&FICHES[s.fiche]&&FICHES[s.fiche].lang==="fr-FR")return "fr-FR";
+ const txt=String(s.prompt||s.q||s.title||"").replace(/<[^>]+>/g," ");
+ if(/en français/i.test(txt)||/traduis en français|que veut dire/i.test(txt))return "fr-FR";
+ return "es-ES";}
+function revealTrad(){const e=$("ePrompt");if(e)e.classList.add("revealed");document.querySelectorAll(".trfr.later").forEach(x=>x.classList.add("show"));}
+
 function startItem(){const R=RUN;R.item=R.q[R.qi];R.steps=R.item.steps;R.si=0;R.itemKo=false;renderStep();}
 function pips(){const R=RUN;$("ePips").innerHTML=R.q.map((it,i)=>`<i class="${i<R.qi?"ok":i===R.qi?"cur":""}${it.rep?" tw":""}"></i>`).join("");}
 function headTxt(s){const R=RUN;if(R.mode==="b")return `👹 La fausse interro : ${s.sec}`;if(R.mode==="r")return "📜 "+FICHES[R.f].title;if(R.mode==="L")return "📖 "+LESSONS[R.lid].title+(s.title?" · "+s.title:"");return ST[R.st].ico+" "+ST[R.st].name+(s.title?" · "+s.title:"");}
 function renderStep(){const R=RUN,s=stepNow();R.tries=0;R.wait=false;R.revealed=false;$("eNext").textContent="Continuer ➜";
- $("eHead").textContent=headTxt(s);pips();$("eScene").innerHTML=s.scene?s.scene():"";$("eCtx").innerHTML=s.ctx?s.ctx():"";$("ePrompt").innerHTML=s.prompt||"";
+ $("eHead").textContent=headTxt(s);pips();$("ePrompt").classList.remove("revealed");$("eScene").innerHTML=s.scene?s.scene():"";$("eCtx").innerHTML=s.ctx?s.ctx():"";$("ePrompt").innerHTML=s.prompt||"";if(window.VOIX)VOIX.setQuestionLang("in");
  $("eRule").classList.add("hide");$("eMsg").innerHTML="";$("eMsg").className="msg";
  const inp=$("in");inp.value=s.pre||"";$("inWrap").classList.toggle("hide",!!s.noInput);inp.classList.toggle("area",!!s.area);inp.rows=s.area?4:1;autoH();
  inp.placeholder=s.area?"Écris ton texte ici… (ou dicte-le au micro)":"Tape ta réponse ici…";
@@ -894,13 +964,13 @@ function go(){const R=RUN;if(!R)return;if(R.wait){next();return;}const s=stepNow
  if(R.mode==="b")return bossAnswer(s,v);
  if(R.mode==="r")return reciteCheck(v);
  const r=s.check(v);if(r.st==="ko")onBad(r);else onGood(r);}
-function onGood(r){const R=RUN;R.wait=true;if(r.st==="near"){SND.near();say(r.msg,"near");}else{if(!r.silent)SND.ok();say(r.msg,"ok");}
+function onGood(r){const R=RUN;R.wait=true;revealTrad();if(r.st==="near"){SND.near();say(r.msg,"near");}else{if(!r.silent)SND.ok();say(r.msg,"ok");}
  if(r.after)$("eCtx").innerHTML=r.after;$("eGo").classList.add("hide");$("eNext").classList.remove("hide");$("eHint").classList.add("hide");
  const g=$("ingot");if(g)g.classList.add("gold");}
 function onBad(r){const R=RUN,s=stepNow();R.tries++;R.itemKo=true;SND.ko();if(r.melt)melt();
  let m="✖ "+r.msg;if(R.tries===1&&!r.melt)m+=" Réessaie, ou touche 💡.";
  if(r.melt||R.tries>=2)rule(r.rule||s.rule);
- if(R.tries>=3)R.revealed=true;if(R.tries>=3&&s.good&&s.k!=="place")m+=`<br>La bonne réponse : <b>${esc(s.good)}</b>. Tape-la pour continuer.`;
+ if(R.tries>=3){R.revealed=true;revealTrad();}if(R.tries>=3&&s.good&&s.k!=="place")m+=`<br>La bonne réponse : <b>${esc(s.good)}</b>. Tape-la pour continuer.`;
  say(m,"ko");}
 function hint(){const s=stepNow();if(!s||!s.hint)return;SND.click();say("💡 "+s.hint,"near");}
 function next(){const R=RUN;if(R.mode==="L")return learnNext();R.si++;if(R.si<R.steps.length){renderStep();return;}
@@ -920,10 +990,10 @@ function renderCahier(){$("cList").innerHTML=Object.keys(FICHES).map(k=>{const P
  document.querySelectorAll("#cList [data-f]").forEach(b=>b.onclick=()=>{$("cahier").classList.remove("on");openRecite(b.dataset.f);});}
 function openRecite(f){const F=FICHES[f];RUN={mode:"r",f,q:[{rep:false}],qk:["re:"+f],qi:0,firstOK:0,reps:{}};
  RUN.item={steps:[{k:"rec",area:true,title:"",scene:()=>f==="texto"||/^c\d/.test(f)?`<div class="pwrap small">${painting({placed:ALLP})}</div>`:"",
-  prompt:f==="texto"?"Écris ton texte de 60 mots sur le tableau. Papa peut l'écouter avec 👂 Papa écoute.":"Récite ce passage du cahier : tape-le, dicte-le, ou appelle papa avec 👂 Papa écoute.",good:F.txt.replace(/^Modèle : /,""),papa:true}]};
+  prompt:f==="texto"?"Écris ton texte de 60 mots sur le tableau. Papa peut l'écouter avec 👂 Papa écoute.":"Récite ce passage du cahier : tape-le, dicte-le, ou appelle papa avec 👂 Papa écoute.",good:F.txt.replace(/^Modèle : /,""),papa:true,lang:F.lang,fiche:f}]};
  RUN.steps=RUN.item.steps;RUN.si=0;RUN.itemKo=false;openEnc();renderStep();}
 function reciteCheck(v){const R=RUN;const r=reciteEval(R.f,v,R.tries);
- if(r.st==="ok"){S.m["re:"+R.f]=true;save();R.qi=1;onGood(r);$("eNext").textContent="Retour ➜";}else onBad(Object.assign(r,{rule:R.tries>=1?`<b>📜 Le cahier :</b> <span class="es">${esc(FICHES[R.f].txt)}</span>`:null}));}
+ if(r.st==="ok"){S.m["re:"+R.f]=true;save();R.qi=1;onGood(r);$("eNext").textContent="Retour ➜";}else onBad(Object.assign(r,{rule:R.tries>=1?`<b>📜 Le cahier :</b> <span class="es">${esc(FICHES[R.f].txt)}</span>${FICHES[R.f].txtfr?trfr(FICHES[R.f].txtfr):""}`:null}));}
 function reciteEval(f,v,tries){const F=FICHES[f];let r;const R={f,tries:tries||0};
  if(R.f==="texto"){const t=textScore(v);r=t.sc>=3.5?ok("✔ Excellent texte ! "+textMsg(t)):ko(textMsg(t));}
  else if(F.forms){const U=toks(v).map(x=>x.replace(/ñ/g,"n"));const miss=F.forms.filter(x=>!U.includes(x));const order=F.forms.every((x,i)=>i===0||U.indexOf(x)>U.indexOf(F.forms[i-1]));
@@ -934,7 +1004,7 @@ function papaRes(f,g){return {papa:g,ok:g!=="revoir"};}
 function papaDone(g,f){(S.papa[f]=S.papa[f]||[]).push({g,d:new Date().toISOString().slice(0,10)});if(g!=="revoir")S.m["re:"+f]=true;save();
  const R=RUN;if(R&&R.mode==="L"){const s=stepNow();if(g==="revoir"){SND.ko();say("🔁 Papa : à revoir. Relis le texte et recommence.","ko");return;}if(s&&s.recFinal)R.recPapa=true;SND.level();onGood(ok(g==="coeur"?"✅ Papa a validé : par cœur !":"🟠 Papa a validé : presque."));return;}
  if(R&&R.mode==="b"){R.papaG=g;say(g==="coeur"?"👂 Papa a validé le texte : par cœur !":g==="presque"?"👂 Papa : presque.":"👂 Papa : à revoir.",g==="revoir"?"ko":"ok");return;}
- if(g==="revoir"){SND.ko();say("🔁 À revoir. Relis le cahier et recommence.","ko");rule(`<b>📜 Le cahier :</b> <span class="es">${esc(FICHES[f].txt)}</span>`);return;}
+ if(g==="revoir"){SND.ko();say("🔁 À revoir. Relis le cahier et recommence.","ko");rule(`<b>📜 Le cahier :</b> <span class="es">${esc(FICHES[f].txt)}</span>${FICHES[f].txtfr?trfr(FICHES[f].txtfr):""}`);return;}
  SND.level();if(R){R.qi=1;onGood(ok(g==="coeur"?"✅ Papa a validé : par cœur !":"🟠 Papa a validé : presque. Encore une fois demain."));$("eNext").textContent="Retour ➜";}}
 
 /* ================= BOSS ================= */
@@ -975,22 +1045,22 @@ $("eGo").onclick=go;$("eNext").onclick=()=>{const R=RUN;if(R&&R.mode==="r"&&R.qi
 $("in").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();if(RUN&&RUN.wait){$("eNext").click();}else go();}});
 $("in").addEventListener("input",autoH);
 $("tPaint").innerHTML=painting({placed:ALLP});$("tCount").textContent="⏳ "+countTxt();
-VOIX.attach("in",{field:$("in"),anchor:$("inWrap"),lang:"es-ES",
+VOIX.attach("in",{field:$("in"),anchor:$("inWrap"),lang:()=>micLang(),langs:["fr-FR","es-ES"],
  fiche:()=>{const R=RUN;if(!R)return null;if(R.mode==="r"){return R.f;}const s=stepNow();if(R.mode==="L")return s&&s.fiche||null;if(s&&s.k==="text"){FICHES.texto.txt="Texte écrit : « "+$("in").value.trim()+" » • "+FICHES.texto.txt.replace(/^Texte écrit : .*? • /,"");return "texto";}return null;},
  papaOK:()=>{const R=RUN;if(!R)return false;if(R.mode==="r")return true;const s=stepNow();if(R.mode==="L")return !!(s&&s.fiche);return !!(s&&s.papa&&R.mode==="b");},
  canRedo:()=>false,papa:(g,f)=>papaDone(g,f),retry:()=>{}});
 /* accès pour les tests */
-window.__tm={S:()=>S,RUN:()=>RUN,step:()=>stepNow(),start:startStation,boss:startBoss,recite:openRecite,conj,diagForm,cmpForm,textScore,checkDate,dateFull,show,renderMap,
+window.__tm={S:()=>S,RUN:()=>RUN,step:()=>stepNow(),start:startStation,boss:startBoss,recite:openRecite,conj,diagForm,cmpForm,textScore,checkDate,dateFull,show,renderMap,micLang,revealTrad,
  reset(){S=fresh();save();},startWith(k,keys){const pl=ST[k].pool();const list=keys.map(x=>pl.find(y=>y.key===x));if(k==="placer")PLACED={};RUN={mode:"st",st:k,q:list.map(x=>x.make(false)),qk:list.map(x=>x.key),mk:list,qi:0,firstOK:0,reps:{}};openEnc();startItem();},placeAt,sel(k){SEL=k;},lesson:id=>startLesson(id),jump(i){RUN.qi=i;startItem();},review:id=>startLesson(id,true),bossLast(){const R=RUN;R.qi=R.q.length-1;R.item=R.q[R.qi];R.steps=R.item.steps;R.si=0;renderStep();}};
 
 /* ================= BIBLIOTHÈQUE DE LA LEÇON : apprendre avant de s'entraîner ================= */
-FICHES.diph={title:"La règle des diphtongues",txt:"La diphtongue transforme la voyelle du radical : e devient ie, o devient ue, u devient ue. Elle se fait à toutes les personnes sauf nosotros et vosotros.",
+FICHES.diph={title:"La règle des diphtongues",lang:"fr-FR",txt:"La diphtongue transforme la voyelle du radical : e devient ie, o devient ue, u devient ue. Elle se fait à toutes les personnes sauf nosotros et vosotros.",
  g:[["e devient ie","e en ie","e ie","e donne ie"],["o devient ue","o en ue","o ue","o donne ue"],["u devient ue","u en ue","u ue","u donne ue"],["sauf","pas a","excepte","jamais"],["nosotros"],["vosotros"],["radical","voyelle"]],crit:[0,1,2,4,5]};
-FICHES.ser={title:"Es, está ou tiene",txt:"Es veut dire il est : on décrit la personne. Está veut dire il est quelque part, ou dans une posture. Tiene veut dire il a.",
+FICHES.ser={title:"Es, está ou tiene",lang:"fr-FR",txt:"Es veut dire il est : on décrit la personne. Está veut dire il est quelque part, ou dans une posture. Tiene veut dire il a.",
  g:[["es"],["decrit","decrire","description","comment"],["esta"],["quelque part","lieu","situer","ou il est","posture","position"],["tiene"],["il a","avoir"]],crit:[0,2,4,5]};
 const T=(a,b)=>`<tr><td class="es">${a}</td><td>${b}</td></tr>`;
 const tab=(h,rows)=>`<table class="ltab"><tr><th>${h[0]}</th><th>${h[1]}</th></tr>${rows.join("")}</table>`;
-function hiConj(inf){const V=VERBS[inf];return `<table class="ltab small"><tr><th colspan="2">${inf.toUpperCase()} <small>(${esc(V.fr)})</small></th></tr>${PERS.map(p=>{const f=conj(inf,p);const d=!NV(p)&&V.t!=="no";return `<tr class="${NV(p)?"nv":""}"><td>${PRON[p].split(" / ")[0]}</td><td class="es">${d?f.replace(V.drad,`<b class="dip">${V.drad}</b>`):f}</td></tr>`;}).join("")}</table>`;}
+function hiConj(inf){const V=VERBS[inf];return `<table class="ltab small"><tr><th colspan="2">${inf.toUpperCase()} <small>(${esc(V.fr)})</small></th></tr>${PERS.map((p,i)=>{const f=conj(inf,p);const d=!NV(p)&&V.t!=="no";const ff=V.frf&&V.frf[i];return `<tr class="${NV(p)?"nv":""}"><td>${PRON[p].split(" / ")[0]}${trfr(PFR_SHORT[p])}</td><td class="es">${d?f.replace(V.drad,`<b class="dip">${V.drad}</b>`):f}${trfr(ff)}</td></tr>`;}).join("")}</table>`;}
 const LESSONS={
  diph:{soir:1,ico:"🔥",title:"Les verbes à diphtongue",fiche:"diph",
   explain:()=>`<p><b>Une diphtongue</b>, c'est une voyelle du radical qui se transforme en deux lettres quand on conjugue au présent.</p>
@@ -998,16 +1068,16 @@ const LESSONS={
    <div class="ltabs">${hiConj("pensar")}${hiConj("demostrar")}${hiConj("dormir")}${hiConj("jugar")}</div>
    <p>⚠️ Regarde les lignes grises : <b>nosotros et vosotros n'ont jamais de diphtongue</b> (pensamos, pensáis). Astuce : les 4 autres formes dessinent une botte 👢.</p>
    <p>Les terminaisons ne changent pas : <b>-AR</b> o, as, a, amos, áis, an. <b>-ER</b> o, es, e, emos, éis, en. <b>-IR</b> o, es, e, imos, ís, en.</p>
-   <p>Verbe pronominal (sentarse) : le pronom se met devant. <span class="es">me siento, te sientas, se sienta, nos sentamos, os sentáis, se sientan</span>.</p>
+   <p>Verbe pronominal (sentarse) : le pronom se met devant. <span class="es">me siento, te sientas, se sienta, nos sentamos, os sentáis, se sientan</span>${trfr("je m'assieds, tu t'assieds, il s'assied, nous nous asseyons, vous vous asseyez, ils s'asseyent")}.</p>
    <p>Piège : <b>usted</b> se conjugue comme él, <b>ustedes</b> comme ellos.</p>`,
   cards:[["PENSAR · yo","pienso"],["PENSAR · nosotros","pensamos"],["QUERER · tú","quieres"],["QUERER · vosotros","queréis"],["DEMOSTRAR · él","demuestra"],["DORMIR · ellos","duermen"],["DORMIR · nosotros","dormimos"],["JUGAR · yo","juego"],["JUGAR · vosotros","jugáis"],["SENTARSE · él","se sienta"],["VOLVER · usted","vuelve"]].map(([q,a])=>({q,a:[a],t:"form"}))
    .concat([{q:"Les 2 personnes qui n'ont jamais de diphtongue",a:["nosotros vosotros"],t:"forms"},{q:"Les 6 terminaisons des verbes en -AR",a:["o as a amos ais an"],t:"forms"},{q:"Les 6 terminaisons des verbes en -ER",a:["o es e emos eis en"],t:"forms"}])},
  estar:{soir:1,ico:"📍",title:"ESTAR et ses 2 usages",fiche:"estar",
-  explain:()=>`<div class="ltabs"><table class="ltab"><tr><th colspan="2">ESTAR (être)</th></tr>${PERS.map(p=>`<tr><td>${PRON[p].split(" / ")[0]}</td><td class="es"><b>${ESTAR[p]}</b></td></tr>`).join("")}</table>
-   <div><p><b>Usage 1 : situer</b> (où est-il ?)<br><span class="es">María está a la izquierda. El niño está en el centro.</span></p>
-   <p><b>Usage 2 : la posture</b> (assis, debout)<br><span class="es">José está sentado. Jesús está de pie.</span></p>
+  explain:()=>`<div class="ltabs"><table class="ltab"><tr><th colspan="2">ESTAR (être)</th></tr>${PERS.map((p,i)=>`<tr><td>${PRON[p].split(" / ")[0]}${trfr(PFR_SHORT[p])}</td><td class="es"><b>${ESTAR[p]}</b>${trfr(ESTAR_FR[i])}</td></tr>`).join("")}</table>
+   <div><p><b>Usage 1 : situer</b> (où est-il ?)<br><span class="es">María está a la izquierda. El niño está en el centro.</span>${trfr("Marie est à gauche. L'enfant est au centre.")}</p>
+   <p><b>Usage 2 : la posture</b> (assis, debout)<br><span class="es">José está sentado. Jesús está de pie.</span>${trfr("Joseph est assis. Jésus est debout.")}</p>
    <p>⚠️ Attention aux accents : <b>está</b> (il est) mais <b>esta</b> = cette. <b>estás</b> (tu es) mais <b>estas</b> = ces.</p></div></div>`,
-  cards:PERS.map(p=>({q:`ESTAR · ${PRON[p]}`,a:[ESTAR[p]],t:"form"})).concat([{q:"Les 2 usages d'estar (en français)",g:[["situer","lieu","ou il est","endroit","place"],["posture","position","assis","debout"]],a:["situer, la posture"],t:"sens"},
+  cards:PERS.map(p=>({q:`ESTAR · ${PRON[p]}`,a:[ESTAR[p]],t:"form"})).concat([{q:"Les 2 usages d'estar (en français)",g:[["situer","lieu","ou il est","endroit","place"],["posture","position","assis","debout"]],a:["situer, la posture"],t:"sens",lang:"fr-FR"},
    {q:"Traduis : il est assis",a:["está sentado"],t:"form"},{q:"Traduis : elle est à gauche",a:["está a la izquierda"],t:"form"},{q:"Traduis : ils sont debout",a:["están de pie"],t:"form"}])},
  c1:{soir:2,ico:"🖼️",title:"Le tableau 1 : qui est où",fiche:"c1",
   explain:()=>`<div class="pwrap small">${painting({placed:ALLP,grid:true,labels:true})}</div>${tab(["Cahier","En français"],[T("La Sagrada familia del pajarito es una pintura","La Sainte Famille à l'oiseau est une peinture"),T("que representa a la Virgen María y San José con su hijo Jesús.","qui représente la Vierge Marie et saint Joseph avec leur fils Jésus."),T("En el primer plano, en el centro, está el niño Jesús.","Au premier plan, au centre, il y a l'enfant Jésus."),T("María está a la izquierda y San José está a la derecha.","Marie est à gauche et saint Joseph est à droite.")])}<p>Tu vas apprendre ce passage par cœur : les indices disparaissent petit à petit.</p>`},
@@ -1016,9 +1086,9 @@ const LESSONS={
  c3:{soir:2,ico:"💛",title:"Le tableau 3 : ce qu'il m'inspire",fiche:"c3",
   explain:()=>tab(["Cahier","En français"],[T("La pintura me inspira serenidad y alegría","Le tableau m'inspire la sérénité et la joie"),T("porque es una escena tierna, simple y tranquila.","parce que c'est une scène tendre, simple et tranquille.")])},
  ser:{soir:2,ico:"⚖️",title:"Es, está ou tiene ?",fiche:"ser",
-  explain:()=>`<p class="redn">Ton prof a écrit en rouge : <b>es = il est ≠ tiene = il a</b>.</p>${tab(["Verbe","Quand ?"],[T("es (ser)","il EST comment : description, caractère, origine, métier. <i>José es alto. Picasso es español.</i>"),T("está (estar)","il EST où, ou dans quelle posture. <i>María está a la izquierda. Está sentada.</i>"),T("tiene (tener)","il A : les cheveux, les yeux, une barbe, un objet. <i>José tiene el pelo gris.</i>")])}
-   <div class="ltabs"><table class="ltab small"><tr><th colspan="2">SER</th></tr>${PERS.map(p=>`<tr><td>${PRON[p].split(" / ")[0]}</td><td class="es">${SER[p]}</td></tr>`).join("")}</table><table class="ltab small"><tr><th colspan="2">TENER</th></tr>${PERS.map(p=>`<tr><td>${PRON[p].split(" / ")[0]}</td><td class="es">${TENER[p]}</td></tr>`).join("")}</table></div>
-   <p>❌ <s>es pelo blanco</s> → ✅ <b class="es">tiene el pelo blanco</b> (il A les cheveux blancs).</p>`,
+  explain:()=>`<p class="redn">Ton prof a écrit en rouge : <b>es = il est ≠ tiene = il a</b>.</p>${tab(["Verbe","Quand ?"],[T("es (ser)","il EST comment : description, caractère, origine, métier. <i>José es alto.</i> ${trfr('Joseph est grand.')} <i>Picasso es español.</i> ${trfr('Picasso est espagnol.')}"),T("está (estar)","il EST où, ou dans quelle posture. <i>María está a la izquierda.</i> ${trfr('Marie est à gauche.')} <i>Está sentada.</i> ${trfr('Elle est assise.')}"),T("tiene (tener)","il A : les cheveux, les yeux, une barbe, un objet. <i>José tiene el pelo gris.</i> ${trfr('Joseph a les cheveux gris.')}")])}
+   <div class="ltabs"><table class="ltab small"><tr><th colspan="2">SER (être)</th></tr>${PERS.map((p,i)=>`<tr><td>${PRON[p].split(" / ")[0]}${trfr(PFR_SHORT[p])}</td><td class="es">${SER[p]}${trfr(SER_FR[i])}</td></tr>`).join("")}</table><table class="ltab small"><tr><th colspan="2">TENER (avoir)</th></tr>${PERS.map((p,i)=>`<tr><td>${PRON[p].split(" / ")[0]}${trfr(PFR_SHORT[p])}</td><td class="es">${TENER[p]}${trfr(TENER_FR[i])}</td></tr>`).join("")}</table></div>
+   <p>❌ <s>es pelo blanco</s> → ✅ <b class="es">tiene el pelo blanco</b>${trfr("il a les cheveux blancs")}.</p>`,
   cards:[["Il a les cheveux blancs : ___ el pelo blanco","tiene"],["Il est grand : ___ alto","es"],["Il est assis : ___ sentado","está"],["Ils ont les yeux marron : ___ los ojos marrones","tienen"],["Ils sont à droite : ___ a la derecha","están"],["Je suis grand : ___ alto","soy"],["J'ai une barbe : ___ barba","tengo"]].map(([q,a])=>({q,a:[a],t:"form"}))
    .concat([{q:"SER au présent (les 6 formes)",a:["soy eres es somos sois son"],t:"forms"},{q:"TENER au présent (les 6 formes)",a:["tengo tienes tiene tenemos teneis tienen"],t:"forms"}])},
  doc1a:{soir:2,ico:"🧭",title:"Lexique du doc 1 : plans, places, famille",
@@ -1034,12 +1104,12 @@ const LESSONS={
   explain:()=>`<div class="ltabs"><div class="figwrap">${faceSVG(0)}</div>${tab(["N°","Español"],FACE.map(b=>T(b.n+". "+b.a[0],b.fr)))}</div><p>Ceux que tu avais ratés : <b>la nariz, la mejilla, las orejas, la barbilla</b>.</p>`,
   cards:FACE.map(b=>({q:`Partie n° ${b.n}`,fig:"f",n:b.n,a:b.a,fr:b.fr,t:"noun"}))},
  colores:{soir:3,ico:"🎨",title:"Les couleurs et l'accord",
-  explain:()=>`<p>La couleur s'accorde avec le nom, comme en français.</p>${tab(["Masculin / féminin","Pluriel"],[T("rojo / roja","rojos / rojas"),T("amarillo / amarilla <small>(deux l)</small>","amarillos / amarillas"),T("blanco / blanca","blancos / blancas"),T("negro / negra","negros / negras"),T("verde","verdes"),T("azul","azules"),T("marrón <small>(pardo)</small>","marrones")])}<p><span class="es">Las plantas son verdes. La bandera de España es roja y amarilla.</span></p>`,
+  explain:()=>`<p>La couleur s'accorde avec le nom, comme en français.</p>${tab(["Masculin / féminin","Pluriel"],[T("rojo / roja","rojos / rojas"),T("amarillo / amarilla <small>(deux l)</small>","amarillos / amarillas"),T("blanco / blanca","blancos / blancas"),T("negro / negra","negros / negras"),T("verde","verdes"),T("azul","azules"),T("marrón <small>(pardo)</small>","marrones")])}<p><span class="es">Las plantas son verdes. La bandera de España es roja y amarilla.</span>${trfr("Les plantes sont vertes. Le drapeau de l'Espagne est rouge et jaune.")}</p>`,
   cards:[["rouge (féminin)","roja"],["jaune (féminin)","amarilla"],["vert (pluriel)","verdes"],["bleu (pluriel)","azules"],["marron (pluriel)","marrones"],["blanc (féminin pluriel)","blancas"],["noir (masculin pluriel)","negros"],["Le drapeau de l'Espagne est rouge et jaune","la bandera de españa es roja y amarilla"]].map(([q,a])=>({q,a:[a],t:"form"}))},
  fecha:{soir:3,ico:"📅",title:"La date en toutes lettres",
-  explain:()=>`<p>Modèle : <b class="es">jueves diecinueve de noviembre de dos mil veintiséis</b></p><p>jour + nombre + <b>de</b> + mois + <b>de</b> + année. Pas de majuscule.</p>
-   <p><b>Jours :</b> ${DIAS.map((d,i)=>`<span class="es">${d}</span> (${DFR[i]})`).join(" · ")}</p><p><b>Mois :</b> ${MESES.map((m,i)=>`<span class="es">${m}</span>`).join(" · ")}</p>
-   <p class="small">Nombres : ${NUM.slice(1).map((n,i)=>`${i+1} ${n}`).join(" · ")}</p><p>Années : 2025 dos mil veinticinco · 2026 dos mil veintiséis · 2027 dos mil veintisiete</p>`,
+  explain:()=>`<p>Modèle : <b class="es">jueves diecinueve de noviembre de dos mil veintiséis</b>${trfr("jeudi 19 novembre 2026")}</p><p>jour + nombre + <b>de</b> + mois + <b>de</b> + année. Pas de majuscule.</p>
+   <p><b>Jours :</b> ${DIAS.map((d,i)=>`<span class="es">${d}</span> (${DFR[i]})`).join(" · ")}</p><p><b>Mois :</b> ${MESES.map((m,i)=>`<span class="es">${m}</span> (${MFR[i]})`).join(" · ")}</p>
+   <p class="small">Nombres : ${NUM.slice(1).map((n,i)=>`${i+1} ${n}`).join(" · ")}</p><p>Années : 2025 ${pair("dos mil veinticinco","deux mille vingt-cinq")} · 2026 ${pair("dos mil veintiséis","deux mille vingt-six")} · 2027 ${pair("dos mil veintisiete","deux mille vingt-sept")}</p>`,
   cards:[["jeudi","jueves"],["mercredi","miércoles"],["samedi","sábado"],["novembre","noviembre"],["15","quince"],["16","dieciséis"],["19","diecinueve"],["26","veintiséis"],["2026","dos mil veintiséis"]].map(([q,a])=>({q:`« ${q} » en lettres`,a:[a],t:"form"})).concat([{q:"jeudi 19/11/2026 en toutes lettres",a:[dateFull(INTERRO)],t:"date",d:INTERRO}])},
  murillo:{soir:3,ico:"🏛️",title:"Murillo et les peintres",
   explain:()=>`${tab(["","Murillo"],[T("Bartolomé Esteban Murillo","1618-1682, né à <b>Sevilla</b>"),T("Barroco español","le style baroque, <b>siglo XVII</b>"),T("La Sagrada familia del pajarito","peint en <b>1650</b>, au <b>Museo del Prado</b> (Madrid)")])}<p>Rappel de la dernière interro : <b>Picasso</b> est un pintor español, souvent <b>cubista</b>. Les portraits de <b>Sorolla</b> sont <b>realistas</b>, pintor del <b>siglo XIX</b>.</p>`,
@@ -1062,16 +1132,18 @@ function cardCheck(c,v){if(c.t==="noun")return checkNoun(v,c.a);if(c.t==="sens")
  if(c.t==="forms"){const W=toks(c.a[0]).map(x=>x.replace(/ñ/g,"n")),U=toks(v).map(x=>x.replace(/ñ/g,"n"));const miss=W.filter(x=>!U.includes(x));
   return miss.length?ko(`Il en manque ${miss.length} sur ${W.length}.`):ok("✔ "+esc(c.a[0]));}
  return cmpForm(v,c.a,{spell:true});}
-function reciteStep(L,lvl,review){const F=FICHES[L.fiche];return {k:"rec",area:true,fiche:L.fiche,lvl,recFinal:lvl===3,title:(review?"Révision · ":"")+LV[lvl],
- scene:()=>`${/^c\d/.test(L.fiche)?`<div class="pwrap small">${painting({placed:ALLP})}</div>`:""}<div class="parch lv${lvl}">${maskText(F.txt,lvl)}</div>`,
+function reciteStep(L,lvl,review){const F=FICHES[L.fiche];return {k:"rec",area:true,fiche:L.fiche,lang:F.lang,lvl,recFinal:lvl===3,title:(review?"Révision · ":"")+LV[lvl],
+ scene:()=>`${/^c\d/.test(L.fiche)?`<div class="pwrap small">${painting({placed:ALLP})}</div>`:""}<div class="parch lv${lvl}">${maskText(F.txt,lvl)}</div>${F.txtfr?trfr(F.txtfr):""}`,
  prompt:["Lis le texte et recopie-le en entier. Tu peux aussi le dicter.","Des mots sont cachés : retape tout le texte en les retrouvant.","Il ne reste que les premières lettres : retape tout le texte.","Récite tout le texte de mémoire : tape-le, dicte-le, ou appelle papa avec 👂 Papa écoute."][lvl],
  good:F.txt,hint:"Relis le texte dans la Bibliothèque : "+F.txt.split(" ").slice(0,6).join(" ")+"…",check:v=>reciteEval(L.fiche,v,0)};}
-function cardStep(L,c,i,pass){const fig=c.fig==="b"?bodySVG(c.n):c.fig==="f"?faceSVG(c.n):null;const ans=c.a[0];
- return {k:"card",ckey:"le:"+L.id+":"+i,test:pass===2,pass,title:["Apprendre","Indices","Test sans indice"][pass],
-  scene:()=>(fig?`<div class="figwrap">${fig}</div>`:"")+`<div class="wordc">${esc(c.q)}${c.sub?`<br><small class="mut">${esc(c.sub)}</small>`:""}</div>`+(pass===0?`<div class="answer">👀 ${esc(ans)}</div>`:pass===1?`<div class="answer hintw">${maskText(ans,2)}</div>`:""),
+function cardFr(c){if(c.fr)return c.fr;if(c.lang==="fr-FR")return "";const m=String(c.q||"").match(/^([A-ZÁÉÍÓÚÜÑ]+) · (.+)$/);if(!m)return "";const inf=m[1].toLowerCase(),V=VERBS[inf]||VERBS[inf+"se"];if(!V||!V.frf)return "";const lab=m[2];const p=PERS.find(x=>PRON[x]===lab||PRON[x].split(" / ")[0]===lab||PRON[x].split(" / ").includes(lab));return p?V.frf[PERS.indexOf(p)]:"";}
+function isTradToEs(c){return /^Traduis\b/i.test(String(c.q||""))||c.t==="noun"||c.t==="date";}
+function cardStep(L,c,i,pass){const fig=c.fig==="b"?bodySVG(c.n):c.fig==="f"?faceSVG(c.n):null;const ans=c.a[0],fr=cardFr(c);
+ return {k:"card",ckey:"le:"+L.id+":"+i,test:pass===2,pass,lang:c.lang,title:["Apprendre","Indices","Test sans indice"][pass],
+  scene:()=>(fig?`<div class="figwrap">${fig}</div>`:"")+`<div class="wordc">${esc(c.q)}${c.sub?`<br><small class="mut">${esc(c.sub)}</small>`:""}${c.fr&&(c.fig||!isTradToEs(c)||pass<2)?trfr(c.fr):""}</div>`+(pass===0?`<div class="answer">👀 ${esc(ans)}${fr&&!isTradToEs(c)?trfr(fr):""}</div>`:pass===1?`<div class="answer hintw">${maskText(ans,2)}${fr&&!isTradToEs(c)?trfr(fr):""}</div>`:""),
   prompt:pass===0?"Regarde la réponse, puis tape-la.":pass===1?"Tape la réponse complète, aidé des premières lettres.":(c.t==="noun"?"De mémoire, avec le déterminant !":"De mémoire !"),
   good:ans,hint:c.fr?`En français : ${c.fr}.`:`Ça commence par « ${ans.slice(0,2)} ».`,
-  check(v){const r=cardCheck(c,v);if(r.st==="ok"&&!r.msg)r.msg="✔ "+esc(ans);else if(r.st==="near")r.msg="🟠 "+r.msg;return r;}};}
+  check(v){const r=cardCheck(c,v);if(r.st==="ok"){if(!r.msg)r.msg="✔ "+esc(ans)+(fr?trfr(fr):"");if(isTradToEs(c)||c.lang==="fr-FR")r.reveal=true;}else if(r.st==="near")r.msg="🟠 "+r.msg;return r;}};}
 function startLesson(id,review){const L=Object.assign({id},LESSONS[id]);const items=[];const one=s=>items.push({steps:[s]});
  if(!review)one({k:"explain",noInput:true,title:"Découvrir",scene:()=>`<div class="lesson">${L.explain()}</div>`,prompt:""});
  if(L.fiche){if(review)one(reciteStep(L,3,true));else [0,1,2,3].forEach(l=>one(reciteStep(L,l)));}
