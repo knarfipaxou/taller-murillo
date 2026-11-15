@@ -152,6 +152,56 @@ textarea#in:focus{outline:3px solid #f4d35e}
 .conj span .trfr{font-size:11px;color:#1e4d7b;font-weight:600;text-shadow:none}
 .trfr.later{display:none}
 .revealed .trfr.later,.trfr.later.show,#eMsg .trfr.later{display:block}
+/* ===== QUÊTE DE L'APPRENTI ===== */
+.qbar{display:flex;align-items:center;gap:10px;padding:6px 12px;background:#3b2a1a;border-bottom:4px solid #000;color:#fff;flex-wrap:wrap}
+.qhero{position:relative;width:52px;height:58px;background:#e8dcc0;border:3px solid #000;padding:2px;cursor:pointer;flex:none}
+.hsvg{width:100%;height:100%;display:block}
+.qtool{position:absolute;right:-8px;bottom:-6px;font-size:20px;filter:drop-shadow(1px 1px 0 #000)}
+.qmid{flex:1;min-width:230px}
+.qtitle{font-size:16px;text-shadow:2px 2px 0 #000}.qrank{color:#f4d35e;display:inline-block}.qrank small{color:#ddd;font-weight:600}
+.qprog{position:relative;height:18px;background:#222;border:3px solid #000;margin:4px 0}
+.qprog i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#c0392b,#f1c40f,#3c9a3c,#2e6fd1);transition:width .6s}
+.qprog span{position:relative;display:block;text-align:center;font-size:12px;font-weight:800;line-height:12px;text-shadow:1px 1px 0 #000}
+.qsub{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.qsub small{font-size:12px;color:#ffd27a;font-weight:700}
+.qpots{display:inline-flex;gap:3px;vertical-align:middle}
+.qpot{width:16px;height:18px;border:2px solid #000;background:#555;position:relative;display:inline-block}
+.qpot i{position:absolute;left:1px;right:1px;bottom:1px;height:3px;background:#777}
+.qpot.on{background:#ddd}.qpot.on i{height:11px;background:var(--pc)}
+.qpot.big{width:34px;height:40px;flex:none}.qpot.big i{height:28px}
+.qthumb{width:120px;flex:none}.qthumb .paint{width:100%;display:block}
+.qpaint{transition:filter .8s,opacity .8s}.qpaint .paint{width:100%;display:block}
+.qsign{text-align:center;font-weight:800;font-style:italic;color:#6b4a1e;font-size:14px;margin-top:2px}
+.qbar .qsign{color:#f4d35e;font-size:11px}.qbar .qsign .trfr{display:none}
+.qbtns{display:flex;gap:6px;flex-wrap:wrap}
+.qfree{margin:2px 0 6px;font-size:13px;font-weight:700;color:#5b3f1e}
+.qpig{display:inline;font-weight:700;opacity:.9;margin-left:6px}
+.qpig i{width:10px;height:10px;border:2px solid #000;background:#555;display:inline-block;vertical-align:-1px;margin-right:3px}.qpig .es{color:#ffe14d;font-style:normal}.qpig.on i{background:var(--pc)}
+.qmsg{background:#fff6dc;border:3px solid #000;padding:8px 10px;margin:8px 0;font-size:15px;line-height:1.35}
+.qmsg.got{display:flex;gap:12px;align-items:center;background:#f3ffe6}.qmsg small{display:block;color:#555}
+.qmsg.enc{background:#ffeedd}
+.qpanel{z-index:70}.qbody{font-size:17px;line-height:1.4}
+.qbody .qes{margin:8px 0;font-weight:700;font-size:19px}.qbody .qes .trfr{font-size:.82em}
+.qscene{max-width:360px;margin:0 auto 6px;border:3px solid #000}
+.qlist{margin:6px 0;padding-left:20px}.qlist li{margin:2px 0;font-weight:700}
+.qranks{display:flex;gap:8px;flex-wrap:wrap}.qranks span{background:#e8dcc0;border:2px solid #000;padding:4px 8px}
+.qchoose{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.qch{font:inherit;font-size:13px;background:#e8dcc0;border:3px solid #000;padding:4px 8px;min-width:84px;min-height:46px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;touch-action:manipulation}
+.qch .hsvg{width:30px;height:34px}.qch.sel{background:#ffe14d;box-shadow:0 0 0 3px #3c8527}.qbig{font-size:26px}
+#qName{font-size:20px;padding:8px;border:3px solid #000;width:min(360px,100%);margin-bottom:6px;-webkit-user-select:text;user-select:text}
+.qrow{justify-content:space-between}
+.qdots i{width:12px;height:12px;border:2px solid #000;background:#777;display:inline-block}.qdots i.cur{background:#ffe14d}.qdots i.ok{background:#7cff4a}
+.qup{position:fixed;left:0;right:0;top:max(70px,env(safe-area-inset-top));z-index:90;display:none;justify-content:center;pointer-events:none}
+.qup.on{display:flex}
+.qupc{background:#c6c6c6;border:4px solid #000;box-shadow:inset 4px 4px 0 #fff,inset -4px -4px 0 #555;padding:10px 20px;display:flex;gap:14px;align-items:center;text-align:left;max-width:520px;margin:12px;animation:qpop .6s cubic-bezier(.2,1.6,.4,1)}
+.qupc p{margin:2px 0}
+.qflash{animation:qfl 1.2s ease-out 2}@keyframes qfl{50%{color:#fff;text-shadow:0 0 12px #ffe14d}}
+.qupi{font-size:54px;animation:qspin 1.2s ease-out}.qupt{font-size:22px;font-weight:800}
+@keyframes qpop{0%{transform:scale(.3);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes qspin{0%{transform:scale(.2) rotate(-200deg)}70%{transform:scale(1.25) rotate(10deg)}100%{transform:scale(1) rotate(0)}}
+.qreward{text-align:center;background:#fff6dc;border:3px solid #000;padding:10px;margin-bottom:8px}
+.qreward .qpaint{max-width:340px;margin:6px auto;border:4px solid #c9a227}
+.qclock{font-weight:800;color:#ffe14d;font-size:16px;margin-right:6px}
+@media (orientation:portrait),(max-width:900px){.qthumb{width:96px}.qmid{min-width:200px}}
 
 /* VOIX : micro et Papa écoute */
 .vx{margin:6px 0;font-size:15px}
@@ -197,6 +247,7 @@ textarea#in:focus{outline:3px solid #f4d35e}
  <header class="hud"><b class="logo">🎨 El Taller de Murillo</b><span class="cdh" id="hCount"></span>
   <span class="sp"></span><b class="gems" id="gems">💎 0</b>
   <button class="btn" id="bCahier">📚 Bibliothèque</button><button class="btn" id="bSound">🔊</button></header>
+ <div class="qbar" id="qbar"></div>
  <div class="soirs" id="soirs"></div>
 </div>
 <div id="enc" class="panel">
@@ -215,6 +266,12 @@ textarea#in:focus{outline:3px solid #f4d35e}
  <div class="phead"><h2>📚 La Bibliothèque de la leçon</h2><button class="btn xbtn" data-close="cahier">✖</button></div>
  <div class="pbody"><p class="mut">Toute la leçon est ici. Ouvre une fiche pour la lire, puis l'apprendre par cœur. Une leçon maîtrisée débloque ses exercices.</p><div id="cList" class="tlist"></div></div>
 </div>
+<div id="quest" class="panel small qpanel">
+ <div class="phead"><h2>⚔️ La quête de l'apprenti</h2><div class="pips qdots" id="qDots"></div><button class="btn xbtn" id="qSkip">✖</button></div>
+ <div class="pbody"><div id="qBody" class="qbody"></div>
+  <div class="row qrow"><button class="btn" id="qPrev">⬅ Retour</button><button class="btn green" id="qNext">Suivant ➜</button></div></div>
+</div>
+<div id="qUp" class="qup"></div>
 <div id="toast"></div>
 
 <script>
@@ -1182,6 +1239,103 @@ function renderBiblio(){$("cList").innerHTML=SOIRS2.map(so=>`<h3 class="ph full"
   +`<h3 class="ph full">Pour le boss</h3><button class="btn" data-f="texto">✍️ S'entraîner au texte de 60 mots<small>avec 👂 Papa écoute</small></button>`;
  document.querySelectorAll("#cList [data-bl]").forEach(b=>b.onclick=()=>{$("cahier").classList.remove("on");startLesson(b.dataset.bl);});
  document.querySelectorAll("#cList [data-f]").forEach(b=>b.onclick=()=>{$("cahier").classList.remove("on");openRecite(b.dataset.f);});}
+
+/* ================= LA QUÊTE DE L'APPRENTI : couche RPG (récit, titres, pigments, récompense) ================= */
+const QST=["forge","estar","placer","decrire","set","lexique","fecha","cultura"];
+const PIG={forge:{es:"el rojo",fr:"le rouge",c:"#c0392b"},estar:{es:"el azul",fr:"le bleu",c:"#2e6fd1"},placer:{es:"el amarillo",fr:"le jaune",c:"#f1c40f"},decrire:{es:"el verde",fr:"le vert",c:"#3c9a3c"},
+ set:{es:"el blanco",fr:"le blanc",c:"#f4f4f4"},lexique:{es:"el rosa",fr:"le rose",c:"#e98bb0"},fecha:{es:"el marrón",fr:"le marron",c:"#8a5a2b"},cultura:{es:"el dorado",fr:"le doré",c:"#d4a017"}};
+const RANKS=[{es:"Aprendiz",fr:"apprenti",ico:"🪣"},{es:"Oficial",fr:"compagnon",ico:"🖌️"},{es:"Pintor",fr:"peintre",ico:"🎨"},{es:"Maestro",fr:"maître",ico:"👑"}];
+const BLOUSES=[{c:"#b8332e",es:"roja",fr:"rouge"},{c:"#2d5aa8",es:"azul",fr:"bleue"},{c:"#3c8527",es:"verde",fr:"verte"},{c:"#c9a227",es:"amarilla",fr:"jaune"},{c:"#7b3fb5",es:"morada",fr:"violette"}];
+const TOOLS={pincel:{ico:"🖌️",es:"el pincel",fr:"le pinceau"},espatula:{ico:"🔪",es:"la espátula",fr:"le couteau à peindre"},pluma:{ico:"✒️",es:"la pluma",fr:"la plume"}};
+function heroFresh(){return {name:"",blouse:"#2d5aa8",tool:"pincel",intro:false,rank:0,pig:{},maestro:false,reto:null};}
+function hero(){if(!S.hero||typeof S.hero!=="object")S.hero=heroFresh();const d=heroFresh();for(const k in d)if(S.hero[k]===undefined)S.hero[k]=d[k];if(!S.hero.pig||typeof S.hero.pig!=="object")S.hero.pig={};return S.hero;}
+const heroName=()=>{const n=String(hero().name||"").trim();return n?n.slice(0,20):"Apprenti";};
+function pigNeed(k){return Math.max(1,Math.ceil(stTotal(k)*.8));}
+function pigLive(k){try{return stDone(k)>=pigNeed(k);}catch(e){return false;}}
+function pigOK(k){return !!hero().pig[k]||pigLive(k);}
+function pigCount(){return QST.filter(pigOK).length;}
+function bossBest(){return (S.boss||[]).length?Math.max(...S.boss.map(b=>+b.sc||0)):0;}
+function isMaestro(){return bossBest()>=16||!!hero().maestro;}
+function rankIdx(){if(isMaestro())return 3;const n=pigCount();return n>=6?2:n>=3?1:0;}
+function questPct(){let s=0;QST.forEach(k=>{try{s+=Math.min(1,stDone(k)/pigNeed(k));}catch(e){}});return Math.round(85*s/QST.length+(isMaestro()?15:Math.min(15,15*bossBest()/16*0.5)));}
+const RANK_RULE=["3 pigments pour devenir Oficial","6 pigments pour devenir Pintor","16 / 20 au boss pour devenir Maestro",""];
+function heroSVG(c){return `<svg class="hsvg" viewBox="0 0 12 14" shape-rendering="crispEdges"><rect x="3" y="0" width="6" height="2" fill="#3e2612"/><rect x="3" y="2" width="6" height="4" fill="#f1c27d"/><rect x="4" y="3" width="1" height="1" fill="#222"/><rect x="7" y="3" width="1" height="1" fill="#222"/>
+ <rect x="2" y="6" width="8" height="5" fill="${c}"/><rect x="0" y="6" width="2" height="4" fill="${c}"/><rect x="10" y="6" width="2" height="4" fill="${c}"/><rect x="5" y="6" width="2" height="2" fill="#fff" opacity=".6"/><rect x="3" y="11" width="2" height="3" fill="#3e2612"/><rect x="7" y="11" width="2" height="3" fill="#3e2612"/></svg>`;}
+/* le tableau perd ses couleurs : il les retrouve pigment par pigment */
+function qPaint(n,signed){const g=signed?0:1-n/8,o=signed?1:.5+.5*n/8;return `<div class="qpaint" style="filter:grayscale(${g.toFixed(2)});opacity:${o.toFixed(2)}">${painting({placed:ALLP})}</div>`+(signed?`<div class="qsign"><span class="es">Restaurado por ${esc(heroName())}</span>${trfr("Restauré par "+esc(heroName()))}</div>`:"");}
+function pots(){return `<div class="qpots">${QST.map(k=>{const on=pigOK(k);return `<span class="qpot${on?" on":""}" title="${PIG[k].fr}" style="--pc:${PIG[k].c}"><i></i></span>`;}).join("")}</div>`;}
+function renderQuest(){const H0=hero();let ch=false;QST.forEach(k=>{if(!H0.pig[k]&&pigLive(k)){H0.pig[k]=true;ch=true;}});if(ch)save();const H=H0,ri=rankIdx(),R=RANKS[ri],n=pigCount(),pc=questPct();const el=$("qbar");if(!el)return;
+ el.innerHTML=`<button class="qhero" id="qHero" title="Mon apprenti">${heroSVG(H.blouse)}<span class="qtool">${TOOLS[H.tool]?TOOLS[H.tool].ico:"🖌️"}</span></button>
+ <div class="qmid"><div class="qtitle"><b>${esc(heroName())}</b> · <span class="qrank" id="qRank">${R.ico} <span class="es">${R.es}</span> <small>(${R.fr})</small></span></div>
+  <div class="qprog"><i style="width:${pc}%"></i><span>Quête : ${pc} %</span></div>
+  <div class="qsub">${pots()}<small>${n} / 8 pigments${RANK_RULE[ri]?" · "+RANK_RULE[ri]:""}</small></div></div>
+ <div class="qthumb">${qPaint(n,isMaestro())}</div>
+ <div class="qbtns"><button class="btn" id="qStory">📜 La quête</button>${isMaestro()?'<button class="btn purple" id="qReto">⚡ El Reto</button>':""}</div>`;
+ $("qHero").onclick=()=>{SND.click();openIntro(4);};$("qStory").onclick=()=>{SND.click();openIntro(0);};const r=$("qReto");if(r)r.onclick=()=>{SND.boss();startReto();};
+ /* choix visible : on choisit l'ordre des stations + pigment de chaque station */
+ document.querySelectorAll("#soirs .soir").forEach(sec=>{if(!sec.querySelector(".station[data-st]")||sec.querySelector(".qfree"))return;const h=[...sec.querySelectorAll("h3.ph")].find(x=>/S'entraîner/.test(x.textContent));
+  if(h)h.insertAdjacentHTML("afterend",'<p class="qfree">🗺️ Tu choisis ton chemin : fais ces stations dans l\'ordre que tu veux.</p>');});
+ document.querySelectorAll("#soirs .station[data-st]").forEach(b=>{const k=b.dataset.st;if(!PIG[k]||b.querySelector(".qpig"))return;const on=pigOK(k);
+  b.querySelector(".cnt").insertAdjacentHTML("beforeend",` <span class="qpig${on?" on":""}" style="--pc:${PIG[k].c}"><i></i>${on?"pigment récupéré":"pigment à gagner"} : <span class="es">${PIG[k].es}</span> (${PIG[k].fr})</span>`);});
+ if(!RUN&&!$("quest").classList.contains("on")&&$("map").classList.contains("on")&&ri>(+H.rank||0)){H.rank=ri;save();rankUp(ri);}}
+function rankUp(ri){const R=RANKS[ri];const ov=$("qUp");if(!ov)return;
+ ov.innerHTML=`<div class="qupc"><div class="qupi">${R.ico}</div><div><p class="qupt">¡Ahora eres <b class="es">${R.es}</b>!${trfr("Tu es maintenant "+R.fr+" !")}</p><p class="small">${["","Tu as rendu 3 couleurs au tableau. Murillo te confie plus de travail.","6 couleurs ! Le maître te laisse peindre seul.","Le tableau est sauvé. Tu es un maître de l'atelier."][ri]}</p></div></div>`;
+ ov.classList.remove("on");void ov.offsetWidth;ov.classList.add("on");try{SND.level();setTimeout(()=>SND.paint(),650);}catch(e){}setTimeout(()=>particles(ov.querySelector(".qupi"),"#f4d35e",36),80);
+ const rk=$("qRank");if(rk){rk.classList.remove("qflash");void rk.offsetWidth;rk.classList.add("qflash");}
+ clearTimeout(rankUp.t);rankUp.t=setTimeout(()=>ov.classList.remove("on"),4500);}
+/* ---------- récit d'introduction ---------- */
+const ES=(es,fr)=>`<p class="qes"><span class="es">${es}</span>${trfr(fr)}</p>`;
+function introPages(){return [
+ `<div class="qscene">${qPaint(8)}</div>${ES("Sevilla, año 1650.","Séville, en 1650.")}${ES("Eres el aprendiz del pintor Murillo.","Tu es l'apprenti du peintre Murillo.")}`,
+ `<div class="qscene">${qPaint(0)}</div>${ES("¡Qué desastre! El maestro ha perdido sus colores.","Quelle catastrophe ! Le maître a perdu ses couleurs.")}${ES("Su cuadro, <i>La Sagrada Familia del pajarito</i>, se borra.","Son tableau, <i>La Sainte Famille à l'oiseau</i>, s'efface.")}`,
+ `${ES("Para salvarlo, necesitas cuatro saberes.","Pour le sauver, il te faut quatre savoirs.")}<ul class="qlist"><li>🔥 Les verbes à diphtongue</li><li>📍 Le verbe estar</li><li>📖 Le lexique</li><li>🖼️ La description du tableau</li></ul><p>Chaque leçon s'apprend d'abord. Ensuite, chaque station réussie te rend un pigment ${pots()}</p>`,
+ `${ES("Cada color devuelve la vida al cuadro.","Chaque couleur redonne vie au tableau.")}<p>Ton titre monte avec ta maîtrise :</p><div class="qranks">${RANKS.map(r=>`<span>${r.ico} <b class="es">${r.es}</b>${trfr(r.fr)}</span>`).join("")}</div><p>Bats la fausse interro avec <b>16 / 20</b> ou plus. Tu signeras le tableau restauré.</p>${ES("¡Manos a la obra!","Au travail !")}`,
+ `${ES("¿Cómo te llamas?","Comment t'appelles-tu ?")}<input id="qName" maxlength="20" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false" placeholder="Nom de héros (facultatif)">
+ ${ES("Elige tu blusón.","Choisis ta blouse.")}<div class="qchoose" id="qBl">${BLOUSES.map(b=>`<button class="qch${hero().blouse===b.c?" sel":""}" data-bl="${b.c}">${heroSVG(b.c)}<span class="es">${b.es}</span>${trfr(b.fr)}</button>`).join("")}</div>
+ ${ES("Elige tu herramienta.","Choisis ton outil.")}<div class="qchoose" id="qTl">${Object.entries(TOOLS).map(([k,t])=>`<button class="qch${hero().tool===k?" sel":""}" data-tl="${k}"><span class="qbig">${t.ico}</span><span class="es">${t.es}</span>${trfr(t.fr)}</button>`).join("")}</div>`];}
+let QI=0;
+function openIntro(p){QI=p||0;$("quest").classList.add("on");introPage();}
+function introPage(){const P=introPages(),last=QI>=P.length-1;$("qBody").innerHTML=P[QI];$("qDots").innerHTML=P.map((x,i)=>`<i class="${i===QI?"cur":i<QI?"ok":""}"></i>`).join("");
+ $("qPrev").classList.toggle("hide",QI===0);$("qNext").textContent=last?"⚔️ Commencer la quête":"Suivant ➜";
+ if(last){const H=hero(),n=$("qName");n.value=H.name||"";n.oninput=()=>{H.name=n.value.trim().slice(0,20);save();};
+  document.querySelectorAll("#qBl [data-bl]").forEach(b=>b.onclick=()=>{SND.click();H.blouse=b.dataset.bl;save();document.querySelectorAll("#qBl .qch").forEach(x=>x.classList.toggle("sel",x===b));});
+  document.querySelectorAll("#qTl [data-tl]").forEach(b=>b.onclick=()=>{SND.click();H.tool=b.dataset.tl;save();document.querySelectorAll("#qTl .qch").forEach(x=>x.classList.toggle("sel",x===b));});}}
+function closeIntro(){const n=$("qName");if(n){hero().name=n.value.trim().slice(0,20);try{n.blur();}catch(e){}}hero().intro=true;save();$("quest").classList.remove("on");renderQuest();}
+$("qNext").onclick=()=>{SND.click();if(QI>=introPages().length-1){SND.level();closeIntro();return;}QI++;introPage();};
+$("qPrev").onclick=()=>{SND.click();if(QI>0){QI--;introPage();}};
+$("qSkip").onclick=()=>{SND.click();closeIntro();};
+/* ---------- branchements sur le jeu existant ---------- */
+renderMap=(function(orig){return function(){orig.apply(this,arguments);try{if(!RUN)retoStop();renderQuest();}catch(e){console.error(e);}};})(renderMap);
+endRun=(function(orig){return function(){const R=RUN,k=R&&R.st,had=k&&PIG[k]?!!hero().pig[k]:null,t0=R&&R.reto?R.t0:0;orig.apply(this,arguments);try{
+ if(R&&R.reto){retoStop();const sec=Math.round((Date.now()-t0)/1000),n=R.q.filter(x=>!x.rep).length,H=hero(),b=H.reto;const best=!b||R.firstOK>b.ok||(R.firstOK===b.ok&&sec<b.t);if(best){H.reto={ok:R.firstOK,n,t:sec};save();}
+  $("eCtx").innerHTML=`<div class="qmsg">⏱️ ${Math.floor(sec/60)} min ${sec%60} s · ${R.firstOK} / ${n} du premier coup.${best?" Nouveau record de l'atelier !":` Record : ${b.ok} / ${b.n} en ${Math.floor(b.t/60)} min ${b.t%60} s.`}<br>${ES("¡Bien hecho, maestro!","Bien joué, maître !")}</div>`;return;}
+ if(!k||!PIG[k])return;const now=pigOK(k),P=PIG[k];
+ if(now&&!had){hero().pig[k]=true;save();SND.paint();
+  $("eCtx").innerHTML=`<div class="qmsg got" style="--pc:${P.c}"><span class="qpot on big"><i></i></span><div><b>🎨 Pigment récupéré !</b>${ES("El cuadro recupera "+P.es+".","Le tableau retrouve "+P.fr+".")}<small>${pigCount()} / 8 pigments.</small></div></div>`;}
+ else if(now)$("eCtx").innerHTML=`<div class="qmsg">🎨 Ce pigment (${P.fr}) est déjà au tableau. Bon entraînement : tes réponses restent fraîches.</div>`;
+ else{const left=pigNeed(k)-stDone(k);$("eCtx").innerHTML=`<div class="qmsg">🎨 Encore <b>${left}</b> réponse${left>1?"s":""} maîtrisée${left>1?"s":""} ici pour rendre <span class="es">${P.es}</span> (${P.fr}) au tableau.</div>`;}
+ }catch(e){console.error(e);}};})(endRun);
+bossEnd=(function(orig){return function(){const R=RUN,wasM=isMaestro();orig.apply(this,arguments);try{const sc=Math.round(R.sc*4)/4;
+ if(sc>=16){hero().maestro=true;save();$("eScene").insertAdjacentHTML("afterbegin",`<div class="qreward"><div class="qupi">👑</div>${ES("¡Eres Maestro!","Tu es Maître !")}${qPaint(8,true)}<p>Le tableau a retrouvé toutes ses couleurs. Murillo t'a laissé le signer.</p><button class="btn purple" id="qRetoGo">⚡ El Reto del Maestro</button>${trfr("Le défi du maître : 10 questions mélangées, chrono doux.")}</div>`);
+  $("qRetoGo").onclick=()=>{const e=$("eEnd");if(e)e.remove();closeEnc();SND.boss();startReto();};particles($("eScene"),"#f4d35e",40);}
+ else{const secs=[...new Set(R.log.map(l=>l.sec))].map(s=>{const L=R.log.filter(l=>l.sec===s),p=L.reduce((a,l)=>a+l.pts,0),m=L.reduce((a,l)=>a+l.max,0);return {s,p,m,r:m?p/m:1};}).filter(x=>x.r<.75).sort((a,b)=>a.r-b.r);
+  $("eScene").insertAdjacentHTML("beforeend",`<div class="qmsg enc">${ES("¡Ánimo! Casi lo tienes.","Courage ! Tu y es presque.")}Il te faut <b>16 / 20</b> pour signer le tableau. Encore ${fr(Math.max(0,16-sc))} point${16-sc>1?"s":""}.${secs.length?`<br>À revoir en premier : ${secs.slice(0,4).map(x=>`<b>${esc(x.s.replace(/^[IVX]+\.\s*/,""))}</b> (${fr(x.p)} / ${fr(x.m)})`).join(", ")}.`:""}<br>Les erreurs sont renvoyées dans les stations. Refais-les, puis retente.</div>`);}
+ }catch(e){console.error(e);}};})(bossEnd);
+/* ---------- El Reto del Maestro : 10 questions mélangées, chrono doux ---------- */
+ST.reto={soir:3,ico:"⚡",name:"El Reto del Maestro",sub:"10 questions mélangées",n:10,
+ pool(){return ["forge","estar","decrire","set","lexique","fecha","cultura"].reduce((a,k)=>a.concat(ST[k].pool()),[]);},
+ pick(){const ks=shuffle(["forge","estar","decrire","set","lexique","fecha","cultura"]);let out=[];ks.forEach(k=>{out.push(shuffle(ST[k].pool())[0]);});
+  const rest=shuffle(["forge","estar","set","lexique"]);rest.slice(0,3).forEach(k=>{const p=shuffle(ST[k].pool()).find(x=>!out.includes(x));if(p)out.push(p);});return shuffle(out.filter(Boolean)).slice(0,10);}};
+let RETO_T=0;
+function startReto(){startStation("reto");RUN.reto=true;RUN.t0=Date.now();const h=document.querySelector("#enc .phead");let t=$("qClock");if(!t){h.insertAdjacentHTML("beforeend",'<span class="qclock" id="qClock">⏱️ 0:00</span>');t=$("qClock");}
+ clearInterval(RETO_T);RETO_T=setInterval(()=>{const c=$("qClock");if(!RUN||!RUN.reto||!c){retoStop();return;}const s=Math.round((Date.now()-RUN.t0)/1000);c.textContent=`⏱️ ${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;},1000);}
+function retoStop(){clearInterval(RETO_T);RETO_T=0;const c=$("qClock");if(c)c.remove();}
+/* une bannière de titre ne reste pas devant un exercice */
+openEnc=(function(orig){return function(){const u=$("qUp");if(u)u.classList.remove("on");return orig.apply(this,arguments);};})(openEnc);
+/* ---------- démarrage ---------- */
+hero();
+$("bPlay").onclick=()=>{SND.level();show("map");renderMap();if(!hero().intro&&!window.__tqQuiet)openIntro(0);};
+window.__tq={hero,rankIdx,pigCount,questPct,pigOK,pigNeed,openIntro,closeIntro,startReto,renderQuest,isMaestro};
 
 </script><!--CLAVIER--><style>/* CLAVIER iPad : mode « clavier ouvert » */
 html.kb-on,html.kb-on body{overflow:hidden!important;overscroll-behavior:none}
